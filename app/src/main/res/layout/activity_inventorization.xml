@@ -6,4 +6,28 @@
     android:layout_height="match_parent"
     tools:context="com.example.valerapelenskyi.glinvent.inventorization.InventorizationActivity">
 
+    <LinearLayout
+        android:layout_width="368dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="8dp">
+
+        <TextView
+            android:id="@+id/tvResponse"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="tvRespons"
+            tools:layout_editor_absoluteX="94dp"
+            tools:layout_editor_absoluteY="16dp" />
+
+        <Button
+            android:id="@+id/btnTestConnect"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Test Connect"
+            tools:layout_editor_absoluteX="87dp"
+            tools:layout_editor_absoluteY="124dp" />
+    </LinearLayout>
+
 </android.support.constraint.ConstraintLayout>
