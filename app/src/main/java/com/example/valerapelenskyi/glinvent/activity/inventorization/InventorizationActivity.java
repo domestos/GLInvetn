@@ -47,14 +47,14 @@ public class InventorizationActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //getStringResponse();
-                getJsonObjectRequest();
+                //getJsonObjectRequest();
             }
         });
 
         inventFragment = getInventorizationFragment();
         inventFragment.linkToActivity(this);
-        inventFragment.runCopyDB();
-        showProgress(false);
+        inventFragment.showListView();
+        showProgress(inventFragment.getIsWork());
     }
 
     // Fragment запускає цей метод (показує стан AsyncTasks)
