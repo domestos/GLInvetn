@@ -19,7 +19,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".inventorization.InventorizationActivity"></activity>
+        <activity android:name=".activity.inventorization.InventorizationActivity"></activity>
     </application>
 
 </manifest>

@@ -1,4 +1,4 @@
-package com.example.valerapelenskyi.glinvent.connect;
+package com.example.valerapelenskyi.glinvent.database.mysql;
 
 import android.content.Context;
 
@@ -11,20 +11,19 @@ import com.android.volley.toolbox.Volley;
  * Singelton class
  */
 
-public class ConnectorSingle {
+public class MySQLConnect {
 
-    private static ConnectorSingle connectorSingle;
+    private static MySQLConnect mySQLConnect;
     private RequestQueue requestQueue;
     private static Context mCtx;
 
-    private ConnectorSingle(Context context){
+    private MySQLConnect(Context context){
         mCtx = context;
-        requestQueue = getFequestQue();
-
+        requestQueue = getRequestQue();
     }
 
 
-    public RequestQueue getFequestQue(){
+    public RequestQueue getRequestQue(){
 
         if(requestQueue == null){
             requestQueue = Volley.newRequestQueue(mCtx.getApplicationContext());
@@ -32,14 +31,16 @@ public class ConnectorSingle {
         return  requestQueue;
     }
 
-    public static  synchronized ConnectorSingle getInstance(Context context){
-        if(connectorSingle == null){
-            connectorSingle = new ConnectorSingle(context);
+    public static  synchronized MySQLConnect getInstance(Context context){
+        if(mySQLConnect == null){
+            mySQLConnect = new MySQLConnect(context);
         }
-            return connectorSingle;
+            return mySQLConnect;
     }
+
 
     public<T> void  addToRequestque(Request<T> request) {
         requestQueue.add(request);
     }
+
 }
