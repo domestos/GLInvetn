@@ -1,14 +1,16 @@
 package com.example.valerapelenskyi.glinvent;
 
+
 import android.app.Fragment;
 import android.os.AsyncTask;
+
 import android.util.Log;
 
 /**
  * Created by valera.pelenskyi on 24.10.17.
  */
 
-public class MainActivityFragment extends Fragment{
+public class MainActivityFragment extends Fragment {
 
     private MainActivity activity;
     private MAFAsyncTask mafAsyncTask;

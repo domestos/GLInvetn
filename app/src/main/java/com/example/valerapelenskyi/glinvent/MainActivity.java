@@ -1,9 +1,11 @@
 package com.example.valerapelenskyi.glinvent;
 
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -15,13 +17,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.valerapelenskyi.glinvent.activity.inventorization.InventorizationActivity;
+import com.example.valerapelenskyi.glinvent.fragments.FragmentInvetori;
+
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG_MAFRAGMENT = "MAFragment";
     private MainActivityFragment maFragment ;
-
+    private FragmentInvetori fragmentInvetori;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +36,7 @@ public class MainActivity extends AppCompatActivity
         maFragment = getMAFragment();
         maFragment.linkToActivity(this);
         // ============================
+        fragmentInvetori  =  new FragmentInvetori();
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,9 +93,10 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        android.app.FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
 
         if (id == R.id.nav_qrScanner) {
-            // Handle the camera action
+
         } else if (id == R.id.nav_inventorization) {
              // opent new Intent
             Intent intent = new Intent(this, InventorizationActivity.class);

@@ -3,6 +3,9 @@ package com.example.valerapelenskyi.glinvent.database.sqlite;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
+import com.example.valerapelenskyi.glinvent.model.constants.Const;
 
 /**
  * Created by valera.pelenskyi on 25.10.17.
@@ -10,7 +13,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DBHelper extends SQLiteOpenHelper {
 
-    public static final int DATABASE_VERSION =1;
+    public static final int DATABASE_VERSION =2;
     public static final String DATABASE_NAME="wp_gameloft";
     public static final String TABLE_NAME="wp_inventory";
     public static final String KEY_ID = "_id";
@@ -27,15 +30,17 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
+        Log.d(Const.TAG_LOG, "Was create Table "+TABLE_NAME);
+
         sqLiteDatabase.execSQL(" create table "+TABLE_NAME+
                 "("+
                     KEY_ID+" integer primary key, "+
-                    KEY_NUMBER+" text "+
-                    KEY_ITEM+" text "+
-                    KEY_NAME_WKS+" text "+
-                    KEY_OWNER+" text "+
-                    KEY_LOCATION+" text "+
-                    KEY_DESCRIPTION +
+                    KEY_NUMBER+" text, "+
+                    KEY_ITEM+" text, "+
+                    KEY_NAME_WKS+" text, "+
+                    KEY_OWNER+" text, "+
+                    KEY_LOCATION+" text, "+
+                    KEY_DESCRIPTION +" text "+
                 ") "
         );
 
@@ -46,4 +51,9 @@ public class DBHelper extends SQLiteOpenHelper {
             sqLiteDatabase.execSQL("drop table if exists "+ TABLE_NAME);
             onCreate(sqLiteDatabase);
     }
+
+    public void dropTable(SQLiteDatabase sqLiteDatabase){
+        sqLiteDatabase.execSQL("drop table if exists "+ TABLE_NAME);
+    }
+
 }

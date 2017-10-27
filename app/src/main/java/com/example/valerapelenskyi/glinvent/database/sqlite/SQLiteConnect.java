@@ -1,9 +1,9 @@
 package com.example.valerapelenskyi.glinvent.database.sqlite;
 
 import android.content.Context;
-import android.content.Loader;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 
 import com.example.valerapelenskyi.glinvent.model.Device;
@@ -22,7 +22,7 @@ public class SQLiteConnect {
     private static DBHelper dbHelper;
     private SQLiteDatabase sqLiteDatabase;
 
-
+    // ================= Singelton Methods =====================================================
     private SQLiteConnect(Context context) {
         mCtx = context;
         dbHelper = getDbHelper();
@@ -50,29 +50,66 @@ public class SQLiteConnect {
         return sqLiteDatabase;
     }
 
-    //=================Methods ==============================
-    public ArrayList<Device> getAllItems(){
-        Log.d(Const.TAG_LOG, "SQLiteConnect getAllItems");
+    // ================= getAllItemsFromSQLite =====================================================
+    public ArrayList<Device> getAllItemsFromSQLite(){
+        Log.d(Const.TAG_LOG, "SQLiteConnect getAllItemsFromSQLite");
+        ArrayList<Device>  devices = new ArrayList<Device>();
         Cursor cursor = sqLiteDatabase.query(DBHelper.TABLE_NAME, null,null,null,null,null, null);
 
         if(cursor.moveToFirst()){
-            Log.d(Const.TAG_LOG, "row true= "+String.valueOf(cursor.getCount()));
-            ArrayList<Device>  devices = new ArrayList<Device>();
-            devices.add(new Device(1, "250515/6/1"));
-
-            cursor.close();
-            return devices;
+            Log.d(Const.TAG_LOG, "table has "+String.valueOf(cursor.getCount())+" rows");
+            for (cursor.moveToNext(); !cursor.isAfterLast();cursor.moveToNext()) {
+                devices.add(
+                        new Device(
+                            cursor.getInt(cursor.getColumnIndex(DBHelper.KEY_ID)),
+                            cursor.getString(cursor.getColumnIndex(DBHelper.KEY_NUMBER)),
+                            cursor.getString(cursor.getColumnIndex(DBHelper.KEY_ITEM)),
+                            cursor.getString(cursor.getColumnIndex(DBHelper.KEY_NAME_WKS)),
+                            cursor.getString(cursor.getColumnIndex(DBHelper.KEY_OWNER)),
+                            cursor.getString(cursor.getColumnIndex(DBHelper.KEY_LOCATION)),
+                            cursor.getString(cursor.getColumnIndex(DBHelper.KEY_DESCRIPTION))
+                        )
+                );
+            }
         }else{
             Log.d(Const.TAG_LOG, "row = "+String.valueOf(cursor.getCount()));
-            //=============припустимо база не пуста
-            ArrayList<Device>  devices = new ArrayList<Device>();
-            devices.add(new Device(1, "250515/6/1"));
-            //=====================================
-            cursor.close();
-            return devices;
         }
 
+        cursor.close();
+        return devices;
+    }
 
+    // ================= insertAllItemToSQList =====================================================
+    public boolean insertAllItemToSQList(ArrayList<Device> devices) {
+        Log.d(Const.TAG_LOG, "run insertAllItemToSQList");
+        String sql = "INSERT INTO "+ DBHelper.TABLE_NAME  + " VALUES(?,?,?,?,?,?,?);";
+        SQLiteStatement sqLiteStatement = sqLiteDatabase.compileStatement(sql);
+        if(devices !=null) {
+            sqLiteDatabase.beginTransaction();
+            Log.d(Const.TAG_LOG, "beginTransaction ");
+            try {
+                for (int i = 0; i < devices.size(); i++) {
+                    sqLiteStatement.clearBindings();
+                    sqLiteStatement.bindLong(1, devices.get(i).getId());
+                    sqLiteStatement.bindString(2, devices.get(i).getNumber());
+                    sqLiteStatement.bindString(3, devices.get(i).getItem());
+                    sqLiteStatement.bindString(4, devices.get(i).getName_wks());
+                    sqLiteStatement.bindString(5, devices.get(i).getOwner());
+                    sqLiteStatement.bindString(6, devices.get(i).getLocation());
+                    sqLiteStatement.bindString(7, devices.get(i).getDescription());
+                    sqLiteStatement.execute();
+                }
+            sqLiteDatabase.setTransactionSuccessful();
+
+            } finally {
+                sqLiteDatabase.endTransaction();
+                Log.d(Const.TAG_LOG, "endTransaction ");
+            }
+            return true;
+        }else{
+            Log.d(Const.TAG_LOG,"Can't insert. Devices is Empty");
+            return false;
+        }//end IF
 
 
     }

@@ -9,12 +9,13 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.example.valerapelenskyi.glinvent.database.ControllerDB;
 import com.example.valerapelenskyi.glinvent.database.mysql.MySQLConnect;
 import com.example.valerapelenskyi.glinvent.database.sqlite.SQLiteConnect;
 import com.example.valerapelenskyi.glinvent.model.Device;
 import com.example.valerapelenskyi.glinvent.model.constants.Const;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -36,22 +37,23 @@ public class InventorizationActivityFragment  extends Fragment{
 
     public void showListView() {
         Log.d(Const.TAG_LOG, "run showListView ");
-        getAllItemFromSQLite();
-
+        devices = getAllItemFromSQLite();
+        if(devices == null){
+            //якщо в SQLite немає записів то скопіювати їх
+            copyDataFromMySQLtoSQLite();
+        }
     }
 
-    private void getAllItemFromSQLite() {
+
+    private ArrayList<Device> getAllItemFromSQLite() {
         Log.d(Const.TAG_LOG, "run getAllItemFromSQLite ");
-        devices = SQLiteConnect.getInstance(inventorizationActivity).getAllItems();
+        devices = SQLiteConnect.getInstance(inventorizationActivity).getAllItemsFromSQLite();
         if(devices == null){
             inventorizationActivity.tvResponse.setText("SQLite база пуста. Скопіювати базу з MYSQL ?");
             Toast.makeText(inventorizationActivity, "SQLite => Tabele isEmpty", Toast.LENGTH_SHORT).show();
-            //отримати дані з MySQL та записати їх в SQL
-            copyDataFromMySQLtoSQLite();
-
-        }else{
-            Toast.makeText(inventorizationActivity, "NEED SHOW ITEMS", Toast.LENGTH_SHORT).show();
+            return null;
         }
+        return devices;
     }
 
 
@@ -61,7 +63,8 @@ public class InventorizationActivityFragment  extends Fragment{
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                       inventorizationActivity.tvResponse.setText(response.toString());
+                        devices = getArrayDevices(response);
+                        SQLiteConnect.getInstance(inventorizationActivity.getApplicationContext()).insertAllItemToSQList(devices);
                     }
                 },
                 new Response.ErrorListener() {
@@ -77,6 +80,32 @@ public class InventorizationActivityFragment  extends Fragment{
 
         MySQLConnect.getInstance(inventorizationActivity.getApplicationContext()).addToRequestque(jsonObjectRequest);
         return jsonObjectRequest;
+    }
+
+    private ArrayList<Device> getArrayDevices(JSONObject response) {
+        ArrayList<Device> devices = new ArrayList<Device>();
+        try {
+            if(response.get("success").equals(1)){
+                JSONArray products = (JSONArray) response.get("products");
+                for (int i=0; i < products.length(); i++){
+                    JSONObject JO = (JSONObject) products.get(i);
+                    devices.add(new Device(
+                            JO.getInt("id"),
+                            JO.getString("number"),
+                            JO.getString("item"),
+                            JO.getString("name_wks"),
+                            JO.getString("owner"),
+                            JO.getString("location"),
+                            JO.getString("description")
+                    ))  ;
+                }
+
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            inventorizationActivity.tvResponse.setText(e.getMessage());
+        }
+            return devices;
     }
 
 
