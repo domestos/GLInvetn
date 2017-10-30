@@ -90,6 +90,7 @@ public class SQLiteConnect {
             Log.d(Const.TAG_LOG, "beginTransaction ");
             try {
                 for (int i = 0; i < devices.size(); i++) {
+                    Log.e(Const.TAG_LOG, "insert  "+devices.get(i).getNumber()+" || 3"+devices.get(i).getOwner());
                     sqLiteStatement.clearBindings();
                     sqLiteStatement.bindLong(1, devices.get(i).getId());
                     sqLiteStatement.bindString(2, devices.get(i).getNumber());

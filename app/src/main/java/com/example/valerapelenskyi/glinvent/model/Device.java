@@ -1,10 +1,13 @@
 package com.example.valerapelenskyi.glinvent.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by valera.pelenskyi on 26.10.17.
  */
 
-public class Device {
+public class Device implements Parcelable {
 
     private int id ;
     private String number;
@@ -13,6 +16,7 @@ public class Device {
     private String owner;
     private String location;
     private String description;
+
     public Device(int id, String number, String item, String name_wks, String owner, String location, String description) {
         this.id = id;
         this.number = number;
@@ -22,6 +26,28 @@ public class Device {
         this.description = description;
         this.name_wks = name_wks;
     }
+
+    protected Device(Parcel in) {
+        id = in.readInt();
+        number = in.readString();
+        item = in.readString();
+        name_wks = in.readString();
+        owner = in.readString();
+        location = in.readString();
+        description = in.readString();
+    }
+
+    public static final Creator<Device> CREATOR = new Creator<Device>() {
+        @Override
+        public Device createFromParcel(Parcel in) {
+            return new Device(in);
+        }
+
+        @Override
+        public Device[] newArray(int size) {
+            return new Device[size];
+        }
+    };
 
     public int getId() {
         return id;
@@ -77,5 +103,21 @@ public class Device {
 
     public void setName_wks(String name_wks) {
         this.name_wks = name_wks;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(id);
+        parcel.writeString(number);
+        parcel.writeString(item);
+        parcel.writeString(name_wks);
+        parcel.writeString(owner);
+        parcel.writeString(location);
+        parcel.writeString(description);
     }
 }

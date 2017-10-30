@@ -8,7 +8,8 @@ import org.json.JSONObject;
 
 public class Const {
     public static JSONObject JSONResponseFromMysql = null;
-    public static String   server_url = "http://lvilwks0004.lvi.gameloft.org/PHPScript/db_get_all.php";
+   // public static String   server_url = "http://lvilwks0004.lvi.gameloft.org/PHPScript/db_get_all.php";
+    public static String   server_url = "http://varenikhome.ddns.net/PHPScript/db_get_all.php";
 
     public static String  TAG_LOG = "TAG_LOG";
 }

@@ -3,21 +3,21 @@
 
     <item
         is-multidex="true"
-        jar="/home/GAMELOFT/valera.pelenskyi/Project/GLInvetn/app/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
+        jar="/home/varenik/AndroidStudioProjects/GLInvetn/app/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
         jumboMode="true"
         optimize="true"
         revision="26.0.2"
         sha1="3be78ebc2706b2e1fe2f12d5726887a92d6c183b">
-        <dex dex="/home/GAMELOFT/valera.pelenskyi/Project/GLInvetn/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run_43cec4e3b678fc0e2d86f7f4a594ee2bc36db11c/classes.dex" />
+        <dex dex="/home/varenik/AndroidStudioProjects/GLInvetn/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run_acee1a71991eedf46306ac167133806a652af575/classes.dex" />
     </item>
     <item
         is-multidex="true"
-        jar="/home/GAMELOFT/valera.pelenskyi/Project/GLInvetn/app/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
+        jar="/home/varenik/AndroidStudioProjects/GLInvetn/app/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
         jumboMode="true"
         optimize="true"
         revision="26.0.2"
-        sha1="8ec0fa48849a9861d808f03d8a3fc9a2051d343d">
-        <dex dex="/home/GAMELOFT/valera.pelenskyi/Project/GLInvetn/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_e3d5856727a5fb09d26e21c91959ebc7d04be6b6/classes.dex" />
+        sha1="77e1c18864db54b706ab772e08c0ee8458f5148f">
+        <dex dex="/home/varenik/AndroidStudioProjects/GLInvetn/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_d71ccd19751c114f658caf79f9d24e65a16d3484/classes.dex" />
     </item>
 
 </items>

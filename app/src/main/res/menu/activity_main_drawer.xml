@@ -11,9 +11,9 @@
             android:icon="@drawable/ic_menu_gallery"
             android:title="Inventorization" />
         <item
-            android:id="@+id/nav_slideshow"
+            android:id="@+id/nav_need_to_sync"
             android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
+            android:title="Need to Sync" />
         <item
             android:id="@+id/nav_manage"
             android:icon="@drawable/ic_menu_manage"

@@ -2,6 +2,7 @@ package com.example.valerapelenskyi.glinvent;
 
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -18,17 +19,24 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.valerapelenskyi.glinvent.activity.inventorization.InventorizationActivity;
+import com.example.valerapelenskyi.glinvent.fragments.FragmentDetailDevice;
 import com.example.valerapelenskyi.glinvent.fragments.FragmentListDevices;
 
+import com.example.valerapelenskyi.glinvent.fragments.FragmentManage;
 import com.example.valerapelenskyi.glinvent.model.Device;
 
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,FragmentListDevices.OnListFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener,FragmentListDevices.OnListFragmentInteractionListener,
+        FragmentManage.OnFragmentInteractionListener {
 
     private static final String TAG_MAFRAGMENT = "MAFragment";
-    private MainActivityFragment maFragment ;
+    public MainActivityFragment maFragment ;
     private FragmentListDevices fragmentListDevices;
+    private FragmentManage  fragmentManage;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +48,10 @@ public class MainActivity extends AppCompatActivity
         maFragment.linkToActivity(this);
         // ============================
         fragmentListDevices  =  new FragmentListDevices();
+        fragmentManage =new FragmentManage();
+
+        prepareApp();
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,6 +70,7 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
     }
+
 
     @Override
     public void onBackPressed() {
@@ -96,24 +109,29 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-       FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.nav_conteiner, fragmentListDevices);
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+
         if (id == R.id.nav_qrScanner) {
+
+            fragmentTransaction.replace(R.id.nav_conteiner, fragmentListDevices);
 
         } else if (id == R.id.nav_inventorization) {
              // opent new Intent
             Intent intent = new Intent(this, InventorizationActivity.class);
             startActivity(intent);
-        } else if (id == R.id.nav_slideshow) {
+
+        } else if (id == R.id.nav_need_to_sync) {
             // opent new Intent
 
         } else if (id == R.id.nav_manage) {
-
+            fragmentTransaction.replace(R.id.nav_conteiner, fragmentManage);
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
 
         }
+
+        fragmentTransaction.addToBackStack("device");
         fragmentTransaction.commit();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -135,6 +153,32 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onListFragmentInteraction(Device device) {
+        FragmentTransaction fragmentTransaction  = getSupportFragmentManager().beginTransaction();
+        FragmentDetailDevice fragmentDetailDevice = FragmentDetailDevice.newInstance(device);
+        fragmentTransaction.replace(R.id.nav_conteiner,fragmentDetailDevice);
+        fragmentTransaction.addToBackStack("device");
+        fragmentTransaction.commit();
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
+
+
+// ==================================== preparation of APP =========================================
+
+    private void prepareApp() {
+
+        // 1) need check URL
+        // 2) check avaible URL
+        // 3) get all Items From MYSQL
+        // 4) get all Items From SQLite
+        // 5) compare counts bouth DB
+        // 6) check statusSync if need to do sync, check the dateUpdate
+
+
+
 
     }
 }
