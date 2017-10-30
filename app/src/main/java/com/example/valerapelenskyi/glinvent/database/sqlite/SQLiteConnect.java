@@ -10,6 +10,7 @@ import com.example.valerapelenskyi.glinvent.model.Device;
 import com.example.valerapelenskyi.glinvent.model.constants.Const;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by valera.pelenskyi on 26.10.17.
@@ -51,9 +52,9 @@ public class SQLiteConnect {
     }
 
     // ================= getAllItemsFromSQLite =====================================================
-    public ArrayList<Device> getAllItemsFromSQLite(){
+    public List<Device> getAllItemsFromSQLite(){
         Log.d(Const.TAG_LOG, "SQLiteConnect getAllItemsFromSQLite");
-        ArrayList<Device>  devices = new ArrayList<Device>();
+       List<Device> devices = new ArrayList<Device>();
         Cursor cursor = sqLiteDatabase.query(DBHelper.TABLE_NAME, null,null,null,null,null, null);
 
         if(cursor.moveToFirst()){
@@ -80,7 +81,7 @@ public class SQLiteConnect {
     }
 
     // ================= insertAllItemToSQList =====================================================
-    public boolean insertAllItemToSQList(ArrayList<Device> devices) {
+    public void insertAllItemToSQList(List<Device> devices) {
         Log.d(Const.TAG_LOG, "run insertAllItemToSQList");
         String sql = "INSERT INTO "+ DBHelper.TABLE_NAME  + " VALUES(?,?,?,?,?,?,?);";
         SQLiteStatement sqLiteStatement = sqLiteDatabase.compileStatement(sql);
@@ -105,10 +106,10 @@ public class SQLiteConnect {
                 sqLiteDatabase.endTransaction();
                 Log.d(Const.TAG_LOG, "endTransaction ");
             }
-            return true;
+            //return true;
         }else{
             Log.d(Const.TAG_LOG,"Can't insert. Devices is Empty");
-            return false;
+          //  return false;
         }//end IF
 
 

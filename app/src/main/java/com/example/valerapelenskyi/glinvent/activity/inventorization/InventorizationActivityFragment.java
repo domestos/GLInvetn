@@ -19,13 +19,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by valera.pelenskyi on 24.10.17.
  */
 
 public class InventorizationActivityFragment  extends Fragment{
-    private ArrayList<Device> devices = new ArrayList<Device>();;
+    private List<Device> devices = new ArrayList<Device>();;
     private JSONObject jsonResponse;
     private boolean isWork = false; //інформує актівіті про стан AsyncTask
 
@@ -45,7 +46,7 @@ public class InventorizationActivityFragment  extends Fragment{
     }
 
 
-    private ArrayList<Device> getAllItemFromSQLite() {
+    private List<Device> getAllItemFromSQLite() {
         Log.d(Const.TAG_LOG, "run getAllItemFromSQLite ");
         devices = SQLiteConnect.getInstance(inventorizationActivity).getAllItemsFromSQLite();
         if(devices == null){

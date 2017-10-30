@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 
+import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -17,15 +18,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.valerapelenskyi.glinvent.activity.inventorization.InventorizationActivity;
-import com.example.valerapelenskyi.glinvent.fragments.FragmentInvetori;
+import com.example.valerapelenskyi.glinvent.fragments.FragmentListDevices;
+
+import com.example.valerapelenskyi.glinvent.model.Device;
 
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener,FragmentListDevices.OnListFragmentInteractionListener {
 
     private static final String TAG_MAFRAGMENT = "MAFragment";
     private MainActivityFragment maFragment ;
-    private FragmentInvetori fragmentInvetori;
+    private FragmentListDevices fragmentListDevices;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,7 +39,7 @@ public class MainActivity extends AppCompatActivity
         maFragment = getMAFragment();
         maFragment.linkToActivity(this);
         // ============================
-        fragmentInvetori  =  new FragmentInvetori();
+        fragmentListDevices  =  new FragmentListDevices();
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,8 +96,8 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        android.app.FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-
+       FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.nav_conteiner, fragmentListDevices);
         if (id == R.id.nav_qrScanner) {
 
         } else if (id == R.id.nav_inventorization) {
@@ -111,6 +114,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_send) {
 
         }
+        fragmentTransaction.commit();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -127,5 +131,10 @@ public class MainActivity extends AppCompatActivity
             getFragmentManager().beginTransaction().add(maFragment, TAG_MAFRAGMENT).commit();
          }
         return maFragment;
+    }
+
+    @Override
+    public void onListFragmentInteraction(Device device) {
+
     }
 }
