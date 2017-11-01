@@ -59,7 +59,7 @@ public class SQLiteConnect {
 
         if(cursor.moveToFirst()){
             Log.d(Const.TAG_LOG, "table has "+String.valueOf(cursor.getCount())+" rows");
-            for (cursor.moveToNext(); !cursor.isAfterLast();cursor.moveToNext()) {
+            for (cursor.isFirst(); !cursor.isAfterLast();cursor.moveToNext()) {
                 devices.add(
                         new Device(
                             cursor.getInt(cursor.getColumnIndex(DBHelper.KEY_ID)),
@@ -90,7 +90,7 @@ public class SQLiteConnect {
             Log.d(Const.TAG_LOG, "beginTransaction ");
             try {
                 for (int i = 0; i < devices.size(); i++) {
-                    Log.e(Const.TAG_LOG, "insert  "+devices.get(i).getNumber()+" || 3"+devices.get(i).getOwner());
+                    Log.e(Const.TAG_LOG, "insert  "+devices.get(i).getId()+" || "+devices.get(i).getNumber()+" ||  "+devices.get(i).getOwner());
                     sqLiteStatement.clearBindings();
                     sqLiteStatement.bindLong(1, devices.get(i).getId());
                     sqLiteStatement.bindString(2, devices.get(i).getNumber());

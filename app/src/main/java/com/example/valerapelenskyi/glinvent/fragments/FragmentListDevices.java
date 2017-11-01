@@ -170,7 +170,10 @@ public class FragmentListDevices extends Fragment {
                         }catch (RuntimeException e){
                             Log.e(Const.TAG_LOG, "catch " + e.getMessage());
                         }
+
                     }
+
+
                 },
                 new Response.ErrorListener() {
                     @Override

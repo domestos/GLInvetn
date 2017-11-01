@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.example.valerapelenskyi.glinvent.model.Device;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,7 +20,6 @@ public class MainActivityFragment extends Fragment {
     private MainActivity activity;
     private MAFAsyncTask mafAsyncTask;
     private final String TAG_LOG = "TAG_LOG";
-    private List<Device> devices;
 
 
     public MainActivity linkToActivity(MainActivity mainActivity) {
