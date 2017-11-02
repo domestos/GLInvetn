@@ -127,8 +127,6 @@ public class FragmentListDevices extends Fragment {
     }
 
 
-
-
     //need get list of devices
 
 
