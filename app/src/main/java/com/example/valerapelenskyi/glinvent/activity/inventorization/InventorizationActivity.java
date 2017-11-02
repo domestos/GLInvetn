@@ -1,6 +1,5 @@
 package com.example.valerapelenskyi.glinvent.activity.inventorization;
 
-import android.content.ContentValues;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -14,9 +13,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.example.valerapelenskyi.glinvent.R;
-import com.example.valerapelenskyi.glinvent.database.ControllerDB;
 import com.example.valerapelenskyi.glinvent.database.mysql.MySQLConnect;
-import com.example.valerapelenskyi.glinvent.database.sqlite.DBHelper;
 import com.example.valerapelenskyi.glinvent.model.constants.Const;
 
 

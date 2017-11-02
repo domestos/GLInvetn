@@ -16,13 +16,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
-import com.example.valerapelenskyi.glinvent.activity.inventorization.InventorizationActivity;
 import com.example.valerapelenskyi.glinvent.fragments.CheckFragment;
 import com.example.valerapelenskyi.glinvent.fragments.DeviceDetailFragment;
 import com.example.valerapelenskyi.glinvent.fragments.DevicesListFragment;
 import com.example.valerapelenskyi.glinvent.fragments.ManageFragment;
 import com.example.valerapelenskyi.glinvent.model.Device;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 
 public class MainActivity extends AppCompatActivity
@@ -170,6 +172,36 @@ public class MainActivity extends AppCompatActivity
 
 
 // ==================================== preparation of APP =========================================
+// Get the results From QRScan
+// THIS METHOD COMUNICATION WITH CHECKFRAGMENT
+
+@Override
+public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode,resultCode,data);
+    IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+    if (result != null) {
+        if (result.getContents() == null) {
+            Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
+        } else {
+            Device device =  checkFragment.findDevice(result.getContents());
+
+            checkFragment.getEtNumber().setText(result.getContents().toString());
+            checkFragment.getTvNumber().setText(result.getContents().toString());
+
+            checkFragment.getTvItem().setText(device.getItem());
+           checkFragment.getTvOwner().setText(device.getOwner());
+            checkFragment.getTvLocation().setText(device.getLocation());
+
+
+         //   etNumber.setText(result.getContents());
+            // connectToURLFragment.startGetJSON(Const.URL_ADDRESS + "'" + etInventNumber.getText().toString() + "'");
+
+           Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
+        }
+    } else {
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+}
 
     private void prepareApp() {
 

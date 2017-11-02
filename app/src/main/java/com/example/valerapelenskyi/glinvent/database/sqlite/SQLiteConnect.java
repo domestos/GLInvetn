@@ -116,4 +116,36 @@ public class SQLiteConnect {
 
     }
 
+
+
+    // ================= getAllItemsFromSQLite =====================================================
+    public Device getItemFromSQLite(String number){
+        Log.d(Const.TAG_LOG, "SQLiteConnect getItemFromSQLite");
+        Device device = null;
+        String[] selectArgs = new String[]{number};
+        String select = DBHelper.KEY_NUMBER+" = ? ";
+        //Device devices = new Device();
+        Cursor cursor = sqLiteDatabase.query(DBHelper.TABLE_NAME, null, select,  selectArgs,null,null, null);
+
+        if(cursor.moveToFirst()){
+            Log.d(Const.TAG_LOG, "number is find  "+String.valueOf(cursor.getCount())+" rows");
+            Log.d(Const.TAG_LOG, "cursor.toString()  "+ cursor.toString() +" rows");
+            device =  new Device(
+                    cursor.getInt(cursor.getColumnIndex(DBHelper.KEY_ID)),
+                    cursor.getString(cursor.getColumnIndex(DBHelper.KEY_NUMBER)),
+                    cursor.getString(cursor.getColumnIndex(DBHelper.KEY_ITEM)),
+                    cursor.getString(cursor.getColumnIndex(DBHelper.KEY_NAME_WKS)),
+                    cursor.getString(cursor.getColumnIndex(DBHelper.KEY_OWNER)),
+                    cursor.getString(cursor.getColumnIndex(DBHelper.KEY_LOCATION)),
+                    cursor.getString(cursor.getColumnIndex(DBHelper.KEY_DESCRIPTION))
+            );
+
+        }else{
+            Log.d(Const.TAG_LOG, "row = "+String.valueOf(cursor.getCount()));
+        }
+
+        cursor.close();
+        return device;
+    }
+
 }

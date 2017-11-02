@@ -81,20 +81,19 @@ public class ManageFragment extends Fragment implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         mySQLConnect = MySQLConnect.getInstance(getContext());
         devicesFromMySQL = getAllItemsFromMySQL();
-        if(devicesFromMySQL != null){
-        Log.d(TAG, "onCreate: devicesFromMySQL ="+devicesFromMySQL.size() );
-        }else {
-            Log.d(TAG, "onCreate: devicesFromMySQL NULL" );
+        if (devicesFromMySQL != null) {
+            Log.d(TAG, "onCreate: devicesFromMySQL =" + devicesFromMySQL.size());
+        } else {
+            Log.d(TAG, "onCreate: devicesFromMySQL NULL");
         }
 
         sqLiteConnect = SQLiteConnect.getInstance(getContext());
         devicesFromSQLite = sqLiteConnect.getAllItemsFromSQLite();
-        if(devicesFromMySQL != null){
-            Log.d(TAG, "onCreate: devicesFromSQLite ="+devicesFromSQLite.size() );
-        }else {
-            Log.d(TAG, "onCreate: devicesFromSQLite NULL" );
+        if (devicesFromMySQL != null) {
+            Log.d(TAG, "onCreate: devicesFromSQLite =" + devicesFromSQLite.size());
+        } else {
+            Log.d(TAG, "onCreate: devicesFromSQLite NULL");
         }
-
 
 
 //        if (getAllItemsFromMySQL() == null) {
@@ -148,7 +147,7 @@ public class ManageFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-      //  copyDataFromMySQLtoSQLite();
+        //  copyDataFromMySQLtoSQLite();
 
         if (devicesFromMySQL != null) {
             SQLiteConnect.getInstance(getContext().getApplicationContext()).insertAllItemToSQList(devicesFromMySQL);
@@ -181,7 +180,7 @@ public class ManageFragment extends Fragment implements View.OnClickListener {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                      //  Log.d(Const.TAG_LOG, response.toString());
+                        //  Log.d(Const.TAG_LOG, response.toString());
                         devicesFromMySQL = getArrayDevices(response);
                         if (devicesFromMySQL != null) {
                             tvRowInMYSQL.setText(String.valueOf(devicesFromMySQL.size()));
@@ -230,19 +229,20 @@ public class ManageFragment extends Fragment implements View.OnClickListener {
     private JsonObjectRequest copyDataFromMySQLtoSQLite() {
         Log.d(Const.TAG_LOG, "run copyDataFromMySQLtoSQLite");
 
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,Const.server_url,
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, Const.server_url,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         devicesFromMySQL = getArrayDevices(response);
-                        if(devicesFromMySQL !=null){
-                        SQLiteConnect.getInstance(getContext().getApplicationContext()).insertAllItemToSQList(devicesFromMySQL);}
+                        if (devicesFromMySQL != null) {
+                            SQLiteConnect.getInstance(getContext().getApplicationContext()).insertAllItemToSQList(devicesFromMySQL);
+                        }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        }
+                    }
                 }
         );
 

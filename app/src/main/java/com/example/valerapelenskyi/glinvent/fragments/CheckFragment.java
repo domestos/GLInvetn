@@ -5,14 +5,19 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import com.example.valerapelenskyi.glinvent.MainActivity;
 import com.example.valerapelenskyi.glinvent.R;
+import com.example.valerapelenskyi.glinvent.database.sqlite.SQLiteConnect;
+import com.example.valerapelenskyi.glinvent.model.Device;
 import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -26,6 +31,12 @@ public class CheckFragment extends Fragment implements View.OnClickListener {
 
     private Button btnScan;
     private Button btnSetChecked;
+    private TextView tvNumber;
+    private TextView etNumber;
+    private TextView tvItem;
+    private TextView tvOwner;
+    private TextView tvLocation;
+    private String TAG = "TAG_LOG";
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -76,6 +87,12 @@ public class CheckFragment extends Fragment implements View.OnClickListener {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_check, container, false);
 
+        tvNumber = view.findViewById(R.id.tvNumber);
+        etNumber = view.findViewById(R.id.etNumber);
+        tvOwner = view.findViewById(R.id.tvOwner);
+        tvItem = view.findViewById(R.id.tvItem);
+        tvLocation = view.findViewById(R.id.tvLocation);
+
         btnScan = view.findViewById(R.id.btnScan);
         btnSetChecked = view.findViewById(R.id.btnSetChecked );
         btnSetChecked.setOnClickListener(this);
@@ -107,6 +124,7 @@ public class CheckFragment extends Fragment implements View.OnClickListener {
         mListener = null;
     }
 
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -130,13 +148,62 @@ public class CheckFragment extends Fragment implements View.OnClickListener {
             case R.id.btnScan:
 
             // tvUpdate.setText(mainActivityFragment.getURLRequest());
-                IntentIntegrator scanIntegrator = new IntentIntegrator(getActivity());
+                IntentIntegrator scanIntegrator = new IntentIntegrator(this.getActivity());
+                scanIntegrator.setTitle("GAMELOFT");
                 scanIntegrator.initiateScan();
+
+
 
                 break;
             case R.id.btnSetChecked:
 
+
                 break;
         }
+    }
+
+    public Device findDevice(String number) {
+        return SQLiteConnect.getInstance(getContext()).getItemFromSQLite(number);
+    }
+
+
+    public TextView getTvNumber() {
+        return tvNumber;
+    }
+
+    public void setTvNumber(TextView tvNumber) {
+        this.tvNumber = tvNumber;
+    }
+
+    public TextView getEtNumber() {
+        return etNumber;
+    }
+
+    public void setEtNumber(TextView etNumber) {
+        this.etNumber = etNumber;
+    }
+
+    public TextView getTvItem() {
+        return tvItem;
+    }
+
+    public void setTvItem(TextView tvItem) {
+        this.tvItem = tvItem;
+    }
+
+    public TextView getTvOwner() {
+        return tvOwner;
+    }
+
+    public void setTvOwner(TextView tvOwner) {
+        this.tvOwner = tvOwner;
+    }
+
+    public TextView getTvLocation() {
+        return tvLocation;
+    }
+
+    public void setTvLocation(TextView tvLocation) {
+        this.tvLocation = tvLocation;
     }
 }
