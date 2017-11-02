@@ -1,14 +1,18 @@
 package com.example.valerapelenskyi.glinvent.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
+import com.example.valerapelenskyi.glinvent.MainActivity;
 import com.example.valerapelenskyi.glinvent.R;
+import com.google.zxing.integration.android.IntentIntegrator;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -18,7 +22,10 @@ import com.example.valerapelenskyi.glinvent.R;
  * Use the {@link CheckFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CheckFragment extends Fragment {
+public class CheckFragment extends Fragment implements View.OnClickListener {
+
+    private Button btnScan;
+    private Button btnSetChecked;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -55,6 +62,8 @@ public class CheckFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -65,7 +74,13 @@ public class CheckFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_check, container, false);
+        View view = inflater.inflate(R.layout.fragment_check, container, false);
+
+        btnScan = view.findViewById(R.id.btnScan);
+        btnSetChecked = view.findViewById(R.id.btnSetChecked );
+        btnSetChecked.setOnClickListener(this);
+        btnScan.setOnClickListener(this);
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -102,8 +117,26 @@ public class CheckFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
+
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btnScan:
+
+            // tvUpdate.setText(mainActivityFragment.getURLRequest());
+                IntentIntegrator scanIntegrator = new IntentIntegrator(getActivity());
+                scanIntegrator.initiateScan();
+
+                break;
+            case R.id.btnSetChecked:
+
+                break;
+        }
     }
 }

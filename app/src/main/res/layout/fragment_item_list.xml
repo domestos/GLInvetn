@@ -9,7 +9,7 @@
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
     app:layoutManager="LinearLayoutManager"
-    tools:context="com.example.valerapelenskyi.glinvent.fragments.FragmentListDevices"
+    tools:context="com.example.valerapelenskyi.glinvent.fragments.DevicesListFragment"
     tools:listitem="@layout/fragment_item"
     >
 

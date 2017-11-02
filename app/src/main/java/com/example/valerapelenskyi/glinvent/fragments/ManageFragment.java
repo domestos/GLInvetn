@@ -26,20 +26,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link FragmentManage.OnFragmentInteractionListener} interface
+ * {@link ManageFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link FragmentManage#newInstance} factory method to
+ * Use the {@link ManageFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FragmentManage extends Fragment implements View.OnClickListener {
+public class ManageFragment extends Fragment implements View.OnClickListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -58,7 +56,7 @@ public class FragmentManage extends Fragment implements View.OnClickListener {
     private TextView tvRowInSQLite;
     private Button btnInsertToSQLite;
 
-    public FragmentManage() {
+    public ManageFragment() {
         // Required empty public constructor
     }
 
@@ -67,11 +65,11 @@ public class FragmentManage extends Fragment implements View.OnClickListener {
      * this fragment using the provided parameters.
      *
      * @param param1 Parameter 1.
-     * @return A new instance of fragment FragmentManage.
+     * @return A new instance of fragment ManageFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static FragmentManage newInstance(String param1) {
-        FragmentManage fragment = new FragmentManage();
+    public static ManageFragment newInstance(String param1) {
+        ManageFragment fragment = new ManageFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         fragment.setArguments(args);

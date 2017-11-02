@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.valerapelenskyi.glinvent.R;
-import com.example.valerapelenskyi.glinvent.fragments.FragmentListDevices.OnListFragmentInteractionListener;
+import com.example.valerapelenskyi.glinvent.fragments.DevicesListFragment.OnListFragmentInteractionListener;
 
 import com.example.valerapelenskyi.glinvent.model.Device;
 

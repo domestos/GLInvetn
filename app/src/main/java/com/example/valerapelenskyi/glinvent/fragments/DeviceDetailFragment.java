@@ -14,10 +14,10 @@ import com.example.valerapelenskyi.glinvent.model.Device;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link FragmentDetailDevice#newInstance} factory method to
+ * Use the {@link DeviceDetailFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FragmentDetailDevice extends Fragment {
+public class DeviceDetailFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_DEVICE = "device";
@@ -26,7 +26,7 @@ public class FragmentDetailDevice extends Fragment {
     private Device mDevice;
 
 
-    public FragmentDetailDevice() {
+    public DeviceDetailFragment() {
         // Required empty public constructor
     }
 
@@ -35,11 +35,11 @@ public class FragmentDetailDevice extends Fragment {
      * this fragment using the provided parameters.
      *
      * @param mDevice Device
-     * @return A new instance of fragment FragmentDetailDevice.
+     * @return A new instance of fragment DeviceDetailFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static FragmentDetailDevice newInstance(Device mDevice) {
-        FragmentDetailDevice fragment = new FragmentDetailDevice();
+    public static DeviceDetailFragment newInstance(Device mDevice) {
+        DeviceDetailFragment fragment = new DeviceDetailFragment();
         Bundle args = new Bundle();
         args.putParcelable(ARG_DEVICE, mDevice);
         fragment.setArguments(args);

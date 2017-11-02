@@ -18,20 +18,24 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.example.valerapelenskyi.glinvent.activity.inventorization.InventorizationActivity;
-import com.example.valerapelenskyi.glinvent.fragments.FragmentDetailDevice;
-import com.example.valerapelenskyi.glinvent.fragments.FragmentListDevices;
-import com.example.valerapelenskyi.glinvent.fragments.FragmentManage;
+import com.example.valerapelenskyi.glinvent.fragments.CheckFragment;
+import com.example.valerapelenskyi.glinvent.fragments.DeviceDetailFragment;
+import com.example.valerapelenskyi.glinvent.fragments.DevicesListFragment;
+import com.example.valerapelenskyi.glinvent.fragments.ManageFragment;
 import com.example.valerapelenskyi.glinvent.model.Device;
 
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,FragmentListDevices.OnListFragmentInteractionListener,
-        FragmentManage.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener,
+        DevicesListFragment.OnListFragmentInteractionListener,
+        CheckFragment.OnFragmentInteractionListener,
+        ManageFragment.OnFragmentInteractionListener {
 
     private static final String TAG_MAFRAGMENT = "MAFragment";
     public MainActivityFragment maFragment ;
-    private FragmentListDevices fragmentListDevices;
-    private FragmentManage  fragmentManage;
+    private DevicesListFragment devicesListFragment;
+    private ManageFragment manageFragment;
+    private CheckFragment checkFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +47,9 @@ public class MainActivity extends AppCompatActivity
         maFragment = getMAFragment();
         maFragment.linkToActivity(this);
         // ============================
-        fragmentListDevices  =  new FragmentListDevices();
-        fragmentManage =new FragmentManage();
+        devicesListFragment =  new DevicesListFragment();
+        manageFragment =new ManageFragment();
+        checkFragment = new CheckFragment();
 
         prepareApp();
 
@@ -109,18 +114,20 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_qrScanner) {
 
-            fragmentTransaction.replace(R.id.nav_conteiner, fragmentListDevices);
+            fragmentTransaction.replace(R.id.nav_conteiner, devicesListFragment);
 
         } else if (id == R.id.nav_inventorization) {
-             // opent new Intent
-            Intent intent = new Intent(this, InventorizationActivity.class);
-            startActivity(intent);
+
+            fragmentTransaction.replace(R.id.nav_conteiner, checkFragment);
+//            opent new Intent
+//            Intent intent = new Intent(this, InventorizationActivity.class);
+//            startActivity(intent);
 
         } else if (id == R.id.nav_need_to_sync) {
             // opent new Intent
 
         } else if (id == R.id.nav_manage) {
-            fragmentTransaction.replace(R.id.nav_conteiner, fragmentManage);
+            fragmentTransaction.replace(R.id.nav_conteiner, manageFragment);
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
@@ -150,8 +157,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onListFragmentInteraction(Device device) {
         FragmentTransaction fragmentTransaction  = getSupportFragmentManager().beginTransaction();
-        FragmentDetailDevice fragmentDetailDevice = FragmentDetailDevice.newInstance(device);
-        fragmentTransaction.replace(R.id.nav_conteiner,fragmentDetailDevice);
+        DeviceDetailFragment deviceDetailFragment = DeviceDetailFragment.newInstance(device);
+        fragmentTransaction.replace(R.id.nav_conteiner, deviceDetailFragment);
         fragmentTransaction.addToBackStack("device");
         fragmentTransaction.commit();
     }
