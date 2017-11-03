@@ -1,6 +1,7 @@
 package com.example.valerapelenskyi.glinvent.fragments;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -46,6 +47,8 @@ public class CheckFragment extends Fragment implements View.OnClickListener {
     private TextView tvNumber;
     private TextView etNumber;
     private TextView tvItem;
+    private TextView tvSQLite;
+    private TextView tvMySQL;
     private TextView tvOwner;
     private TextView tvLocation;
     private String TAG = "TAG_LOG";
@@ -107,6 +110,10 @@ public class CheckFragment extends Fragment implements View.OnClickListener {
         tvOwner = view.findViewById(R.id.tvOwner);
         tvItem = view.findViewById(R.id.tvItem);
         tvLocation = view.findViewById(R.id.tvLocation);
+        tvSQLite = view.findViewById(R.id.tvSQLite);
+        tvMySQL = view.findViewById(R.id.tvMySQL);
+        tvSQLite.setTextColor(Color.BLACK);
+        tvMySQL.setTextColor(Color.BLACK);
 
         btnScan = view.findViewById(R.id.btnScan);
         btnScan.setOnClickListener(this);
@@ -172,6 +179,9 @@ public class CheckFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.btnSearch:
                 device = null;
+                tvSQLite.setTextColor(Color.BLACK);
+                tvMySQL.setTextColor(Color.BLACK);
+
                 Log.d(TAG, "onClick: tvNumber = "+etNumber.getText().toString());
                 device = SQLiteConnect.getInstance(getContext()).getItemFromSQLite(etNumber.getText().toString());
                 if(device !=null) {
@@ -180,6 +190,17 @@ public class CheckFragment extends Fragment implements View.OnClickListener {
                     tvOwner.setText(device.getOwner());
                     tvLocation.setText(device.getLocation());
 
+
+                    if(device.getStatusInvent().equals("ok")){
+                        tvSQLite.setTextColor(Color.GREEN);
+                    }
+                    if(device.getStatusSync() == STATUS_SYNC_ONLINE && device.getStatusInvent().equals("ok") ){
+                        tvMySQL.setTextColor(Color.GREEN);
+                    }
+
+                    if(device.getStatusSync() == STATUS_SYNC_OFFLINE && device.getStatusInvent().equals("ok") ){
+                        tvMySQL.setTextColor(Color.RED);
+                    }
                 }else {
                     Toast.makeText(getActivity(), "Result null", Toast.LENGTH_LONG).show();
                 }

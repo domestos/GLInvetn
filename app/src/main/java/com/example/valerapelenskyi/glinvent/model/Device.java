@@ -15,15 +15,19 @@ public class Device implements Parcelable {
     private String name_wks;
     private String owner;
     private String location;
+    private String statusInvent;
+    private Integer statusSync;
     private String description;
 
-    public Device(int id, String number, String item, String name_wks, String owner, String location, String description) {
+    public Device(int id, String number, String item, String name_wks, String owner, String location, String statusInvent, Integer statusSync, String description) {
         this.id = id;
         this.number = number;
         this.item = item;
         this.owner = owner;
         this.location = location;
         this.description = description;
+        this.statusInvent = statusInvent;
+        this.statusSync = statusSync;
         this.name_wks = name_wks;
     }
 
@@ -34,6 +38,8 @@ public class Device implements Parcelable {
         name_wks = in.readString();
         owner = in.readString();
         location = in.readString();
+        statusInvent = in.readString();
+        statusSync = in.readInt();
         description = in.readString();
     }
 
@@ -48,6 +54,22 @@ public class Device implements Parcelable {
             return new Device[size];
         }
     };
+
+    public String getStatusInvent() {
+        return statusInvent;
+    }
+
+    public void setStatusInvent(String statusInvent) {
+        this.statusInvent = statusInvent;
+    }
+
+    public Integer getStatusSync() {
+        return statusSync;
+    }
+
+    public void setStatusSync(Integer statusSync) {
+        this.statusSync = statusSync;
+    }
 
     public int getId() {
         return id;
@@ -118,6 +140,8 @@ public class Device implements Parcelable {
         parcel.writeString(name_wks);
         parcel.writeString(owner);
         parcel.writeString(location);
+        parcel.writeString(statusInvent);
+        parcel.writeInt(statusSync);
         parcel.writeString(description);
     }
 }

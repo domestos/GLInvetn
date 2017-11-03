@@ -97,6 +97,8 @@ public class InventorizationActivityFragment  extends Fragment{
                             JO.getString("name_wks"),
                             JO.getString("owner"),
                             JO.getString("location"),
+                            JO.getString("status_invent"),
+                            JO.getInt("status_sync"),
                             JO.getString("description")
                     ))  ;
                 }

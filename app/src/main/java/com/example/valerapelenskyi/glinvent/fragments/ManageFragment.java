@@ -213,6 +213,8 @@ public class ManageFragment extends Fragment implements View.OnClickListener {
                             JO.getString("name_wks"),
                             JO.getString("owner"),
                             JO.getString("location"),
+                            JO.getString("status_invent"),
+                            Const.STATUS_SYNC_ONLINE,
                             JO.getString("description")
                     ));
                 }
@@ -220,7 +222,7 @@ public class ManageFragment extends Fragment implements View.OnClickListener {
             }
         } catch (JSONException e) {
             e.printStackTrace();
-            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(),"ERROR "+ e.getMessage(), Toast.LENGTH_SHORT).show();
         }
         return devices;
     }

@@ -63,13 +63,15 @@ public class SQLiteConnect {
             for (cursor.isFirst(); !cursor.isAfterLast();cursor.moveToNext()) {
                 devices.add(
                         new Device(
-                            cursor.getInt(cursor.getColumnIndex(DBHelper.KEY_ID)),
-                            cursor.getString(cursor.getColumnIndex(DBHelper.KEY_NUMBER)),
-                            cursor.getString(cursor.getColumnIndex(DBHelper.KEY_ITEM)),
-                            cursor.getString(cursor.getColumnIndex(DBHelper.KEY_NAME_WKS)),
-                            cursor.getString(cursor.getColumnIndex(DBHelper.KEY_OWNER)),
-                            cursor.getString(cursor.getColumnIndex(DBHelper.KEY_LOCATION)),
-                            cursor.getString(cursor.getColumnIndex(DBHelper.KEY_DESCRIPTION))
+                                cursor.getInt(cursor.getColumnIndex(DBHelper.KEY_ID)),
+                                cursor.getString(cursor.getColumnIndex(DBHelper.KEY_NUMBER)),
+                                cursor.getString(cursor.getColumnIndex(DBHelper.KEY_ITEM)),
+                                cursor.getString(cursor.getColumnIndex(DBHelper.KEY_NAME_WKS)),
+                                cursor.getString(cursor.getColumnIndex(DBHelper.KEY_OWNER)),
+                                cursor.getString(cursor.getColumnIndex(DBHelper.KEY_LOCATION)),
+                                cursor.getString(cursor.getColumnIndex(DBHelper.KEY_STATUS_INVENT)),
+                                cursor.getInt(cursor.getColumnIndex(DBHelper.KEY_STATUS_SYNC)),
+                                cursor.getString(cursor.getColumnIndex(DBHelper.KEY_DESCRIPTION))
                         )
                 );
             }
@@ -154,6 +156,8 @@ public class SQLiteConnect {
                     cursor.getString(cursor.getColumnIndex(DBHelper.KEY_NAME_WKS)),
                     cursor.getString(cursor.getColumnIndex(DBHelper.KEY_OWNER)),
                     cursor.getString(cursor.getColumnIndex(DBHelper.KEY_LOCATION)),
+                    cursor.getString(cursor.getColumnIndex(DBHelper.KEY_STATUS_INVENT)),
+                    cursor.getInt(cursor.getColumnIndex(DBHelper.KEY_STATUS_SYNC)),
                     cursor.getString(cursor.getColumnIndex(DBHelper.KEY_DESCRIPTION))
             );
 
