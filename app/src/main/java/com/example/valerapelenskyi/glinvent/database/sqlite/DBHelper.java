@@ -22,6 +22,8 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String KEY_NAME_WKS="name_wks";
     public static final String KEY_OWNER="owner";
     public static final String KEY_LOCATION="location";
+    public static final String KEY_STATUS_INVENT="status_INVENT";
+    public static final String KEY_STATUS_SYNC="status_sync";
     public static final String KEY_DESCRIPTION="description";
 
     public DBHelper(Context context) {
@@ -40,6 +42,8 @@ public class DBHelper extends SQLiteOpenHelper {
                     KEY_NAME_WKS+" text, "+
                     KEY_OWNER+" text, "+
                     KEY_LOCATION+" text, "+
+                    KEY_STATUS_INVENT+" text, "+
+                    KEY_STATUS_SYNC+" integer, "+
                     KEY_DESCRIPTION +" text "+
                 ") "
         );

@@ -1,5 +1,6 @@
 package com.example.valerapelenskyi.glinvent.database.sqlite;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -53,7 +54,7 @@ public class SQLiteConnect {
 
     // ================= getAllItemsFromSQLite =====================================================
     public List<Device> getAllItemsFromSQLite(){
-        Log.d(Const.TAG_LOG, "SQLiteConnect getAllItemsFromSQLite");
+       Log.d(Const.TAG_LOG, "SQLiteConnect getAllItemsFromSQLite");
        List<Device> devices = new ArrayList<Device>();
         Cursor cursor = sqLiteDatabase.query(DBHelper.TABLE_NAME, null,null,null,null,null, null);
 
@@ -83,7 +84,8 @@ public class SQLiteConnect {
     // ================= insertAllItemToSQList =====================================================
     public void insertAllItemToSQList(List<Device> devices) {
         Log.d(Const.TAG_LOG, "run insertAllItemToSQList");
-        String sql = "INSERT INTO "+ DBHelper.TABLE_NAME  + " VALUES(?,?,?,?,?,?,?);";
+        //
+        String sql = "INSERT INTO "+ DBHelper.TABLE_NAME  + " VALUES(?,?,?,?,?,?,?,?,?);";
         SQLiteStatement sqLiteStatement = sqLiteDatabase.compileStatement(sql);
         if(devices !=null) {
             sqLiteDatabase.beginTransaction();
@@ -92,14 +94,29 @@ public class SQLiteConnect {
                 for (int i = 0; i < devices.size(); i++) {
                     Log.e(Const.TAG_LOG, "insert  "+devices.get(i).getId()+" || "+devices.get(i).getNumber()+" ||  "+devices.get(i).getOwner());
                     sqLiteStatement.clearBindings();
+
                     sqLiteStatement.bindLong(1, devices.get(i).getId());
                     sqLiteStatement.bindString(2, devices.get(i).getNumber());
                     sqLiteStatement.bindString(3, devices.get(i).getItem());
                     sqLiteStatement.bindString(4, devices.get(i).getName_wks());
                     sqLiteStatement.bindString(5, devices.get(i).getOwner());
                     sqLiteStatement.bindString(6, devices.get(i).getLocation());
-                    sqLiteStatement.bindString(7, devices.get(i).getDescription());
+                    sqLiteStatement.bindString(7, "" );
+                    sqLiteStatement.bindLong(8,   Const.STATUS_SYNC_ONLINE );
+                    sqLiteStatement.bindString(9, devices.get(i).getDescription());
                     sqLiteStatement.execute();
+
+                    /*
+                    *
+                    1 KEY_ID+" integer primary key, "+
+                    2 KEY_NUMBER+" text, "+
+                    3 KEY_ITEM+" text, "+
+                    4 KEY_NAME_WKS+" text, "+
+                    5 KEY_OWNER+" text, "+
+                    6 KEY_LOCATION+" text, "+
+                    7 KEY_STATUS_INVENT+" text, "+
+                    8 KEY_STATUS_SYNC+" integer, "+
+                    9 KEY_DESCRIPTION +" text "+*/
                 }
             sqLiteDatabase.setTransactionSuccessful();
 
@@ -148,4 +165,14 @@ public class SQLiteConnect {
         return device;
     }
 
+    public void updateStatusInvent(int id, int statusSyncOnline) {
+        //UPDATE wp_inventor SET status_sync = "statusSyncOnline", status_invent="ok" where id = id
+
+        String[] whereArgs = new String[]{String.valueOf(id)};
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DBHelper.KEY_STATUS_SYNC, statusSyncOnline);
+        contentValues.put(DBHelper.KEY_STATUS_INVENT, "ok");
+        sqLiteDatabase.update(DBHelper.TABLE_NAME, contentValues, DBHelper.KEY_ID+" = ? ",whereArgs);
+
+    }
 }

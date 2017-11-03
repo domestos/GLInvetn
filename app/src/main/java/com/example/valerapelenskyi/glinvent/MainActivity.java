@@ -183,15 +183,20 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (result.getContents() == null) {
             Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
         } else {
-            Device device =  checkFragment.findDevice(result.getContents());
+            // INSERT RESULT INTO Device of CheckFragment.class
+            Device device = checkFragment.findDevice(result.getContents());
 
-            checkFragment.getEtNumber().setText(result.getContents().toString());
-            checkFragment.getTvNumber().setText(result.getContents().toString());
+            if(device!=null) {
+                checkFragment.setDevice(device);
 
-            checkFragment.getTvItem().setText(device.getItem());
-           checkFragment.getTvOwner().setText(device.getOwner());
-            checkFragment.getTvLocation().setText(device.getLocation());
-
+                checkFragment.getEtNumber().setText(checkFragment.getDevice().getNumber());
+                checkFragment.getTvNumber().setText(checkFragment.getDevice().getNumber());
+                checkFragment.getTvItem().setText(checkFragment.getDevice().getItem());
+                checkFragment.getTvOwner().setText(checkFragment.getDevice().getOwner());
+                checkFragment.getTvLocation().setText(checkFragment.getDevice().getLocation());
+            }else{
+                Toast.makeText(this, "NO FOUND OR DATA BASE IS EMPTY", Toast.LENGTH_LONG).show();
+            }
 
          //   etNumber.setText(result.getContents());
             // connectToURLFragment.startGetJSON(Const.URL_ADDRESS + "'" + etInventNumber.getText().toString() + "'");

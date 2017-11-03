@@ -1,7 +1,6 @@
 package com.example.valerapelenskyi.glinvent.fragments;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,11 +12,23 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.example.valerapelenskyi.glinvent.R;
+import com.example.valerapelenskyi.glinvent.database.mysql.MySQLConnect;
 import com.example.valerapelenskyi.glinvent.database.sqlite.SQLiteConnect;
 import com.example.valerapelenskyi.glinvent.model.Device;
+import com.example.valerapelenskyi.glinvent.model.constants.Const;
 import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,9 +39,10 @@ import com.google.zxing.integration.android.IntentResult;
  * create an instance of this fragment.
  */
 public class CheckFragment extends Fragment implements View.OnClickListener {
-
+    private  Device device;
     private Button btnScan;
     private Button btnSetChecked;
+    private Button btnSearch;
     private TextView tvNumber;
     private TextView etNumber;
     private TextView tvItem;
@@ -39,6 +51,9 @@ public class CheckFragment extends Fragment implements View.OnClickListener {
     private String TAG = "TAG_LOG";
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+
+    private static final int STATUS_SYNC_ONLINE = 0;
+    private static final int STATUS_SYNC_OFFLINE = 1;
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
@@ -94,9 +109,13 @@ public class CheckFragment extends Fragment implements View.OnClickListener {
         tvLocation = view.findViewById(R.id.tvLocation);
 
         btnScan = view.findViewById(R.id.btnScan);
+        btnScan.setOnClickListener(this);
+
+        btnSearch = view.findViewById(R.id.btnSearch);
+        btnSearch.setOnClickListener(this);
+
         btnSetChecked = view.findViewById(R.id.btnSetChecked );
         btnSetChecked.setOnClickListener(this);
-        btnScan.setOnClickListener(this);
         return view;
     }
 
@@ -146,23 +165,85 @@ public class CheckFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnScan:
-
             // tvUpdate.setText(mainActivityFragment.getURLRequest());
                 IntentIntegrator scanIntegrator = new IntentIntegrator(this.getActivity());
                 scanIntegrator.setTitle("GAMELOFT");
                 scanIntegrator.initiateScan();
+                break;
+            case R.id.btnSearch:
+                device = null;
+                Log.d(TAG, "onClick: tvNumber = "+etNumber.getText().toString());
+                device = SQLiteConnect.getInstance(getContext()).getItemFromSQLite(etNumber.getText().toString());
+                if(device !=null) {
+                    tvNumber.setText(device.getNumber());
+                    tvItem.setText(device.getItem());
+                    tvOwner.setText(device.getOwner());
+                    tvLocation.setText(device.getLocation());
 
-
-
+                }else {
+                    Toast.makeText(getActivity(), "Result null", Toast.LENGTH_LONG).show();
+                }
                 break;
             case R.id.btnSetChecked:
-
-
+                    updateItem(device);
                 break;
         }
     }
 
+
+
+    private void updateItem(final Device device1) {
+        Log.d(TAG, "updateItem: ");
+        if(device != null) {
+            StringRequest  stringRequest = new StringRequest (Request.Method.POST, Const.update_status_invent_url,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            Toast.makeText(getActivity(),response.toString(),Toast.LENGTH_LONG).show();
+                            int responseSuccess = getSuccess(response);
+                            if(responseSuccess !=0){
+                                // inset to SQLite SATATUS_ONLINE
+                                SQLiteConnect.getInstance(getContext()).updateStatusInvent(device.getId(),STATUS_SYNC_ONLINE);
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(getActivity(),"ERROR "+error.getMessage(),Toast.LENGTH_LONG).show();
+                            SQLiteConnect.getInstance(getContext()).updateStatusInvent(device.getId(),STATUS_SYNC_OFFLINE);
+                        }
+                    }
+            ){
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> params  = new HashMap<String, String>();
+                    Log.d(TAG, "getParams: id = "+device1.getId());
+                    params.put("id", String.valueOf(device1.getId()));
+                    return params;
+                }
+            };
+
+            MySQLConnect.getInstance(getContext()).addToRequestque(stringRequest);
+        }
+
+    }
+
+    private int getSuccess(String response) {
+        JSONObject jsonObject = null;
+        try {
+            jsonObject = new JSONObject(response);
+            Log.d(TAG, "getSuccess: "+ jsonObject.get("success") );
+            return (Integer) jsonObject.get("success") ;
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
     public Device findDevice(String number) {
+        //return devise or null
         return SQLiteConnect.getInstance(getContext()).getItemFromSQLite(number);
     }
 
@@ -205,5 +286,13 @@ public class CheckFragment extends Fragment implements View.OnClickListener {
 
     public void setTvLocation(TextView tvLocation) {
         this.tvLocation = tvLocation;
+    }
+
+    public Device getDevice() {
+        return device;
+    }
+
+    public void setDevice(Device device) {
+        this.device = device;
     }
 }
