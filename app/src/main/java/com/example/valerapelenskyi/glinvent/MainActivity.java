@@ -22,6 +22,7 @@ import com.example.valerapelenskyi.glinvent.fragments.CheckFragment;
 import com.example.valerapelenskyi.glinvent.fragments.DeviceDetailFragment;
 import com.example.valerapelenskyi.glinvent.fragments.DevicesListFragment;
 import com.example.valerapelenskyi.glinvent.fragments.ManageFragment;
+import com.example.valerapelenskyi.glinvent.fragments.SyncListFragment;
 import com.example.valerapelenskyi.glinvent.model.Device;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -31,13 +32,16 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         DevicesListFragment.OnListFragmentInteractionListener,
         CheckFragment.OnFragmentInteractionListener,
-        ManageFragment.OnFragmentInteractionListener {
+        ManageFragment.OnFragmentInteractionListener,
+        SyncListFragment.OnListFragmentInteractionListenerSync
+        {
 
     private static final String TAG_MAFRAGMENT = "MAFragment";
     public MainActivityFragment maFragment ;
     private DevicesListFragment devicesListFragment;
     private ManageFragment manageFragment;
     private CheckFragment checkFragment;
+    private SyncListFragment syncListFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,17 +56,18 @@ public class MainActivity extends AppCompatActivity
         devicesListFragment =  new DevicesListFragment();
         manageFragment =new ManageFragment();
         checkFragment = new CheckFragment();
+        syncListFragment = new SyncListFragment();
 
         prepareApp();
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+//            }
+//        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -115,19 +120,11 @@ public class MainActivity extends AppCompatActivity
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 
         if (id == R.id.nav_qrScanner) {
-
             fragmentTransaction.replace(R.id.nav_conteiner, devicesListFragment);
-
         } else if (id == R.id.nav_inventorization) {
-
             fragmentTransaction.replace(R.id.nav_conteiner, checkFragment);
-//            opent new Intent
-//            Intent intent = new Intent(this, InventorizationActivity.class);
-//            startActivity(intent);
-
         } else if (id == R.id.nav_need_to_sync) {
-            // opent new Intent
-
+            fragmentTransaction.replace(R.id.nav_conteiner, syncListFragment);
         } else if (id == R.id.nav_manage) {
             fragmentTransaction.replace(R.id.nav_conteiner, manageFragment);
         } else if (id == R.id.nav_share) {
@@ -164,6 +161,11 @@ public class MainActivity extends AppCompatActivity
         fragmentTransaction.addToBackStack("device");
         fragmentTransaction.commit();
     }
+
+    @Override
+    public void onListFragmentInteractionSync(Device device) {
+
+            }
 
     @Override
     public void onFragmentInteraction(Uri uri) {
@@ -221,4 +223,6 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
 
     }
-}
+
+
+        }

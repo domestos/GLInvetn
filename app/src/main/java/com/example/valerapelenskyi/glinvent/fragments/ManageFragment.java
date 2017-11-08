@@ -136,7 +136,6 @@ public class ManageFragment extends Fragment implements View.OnClickListener {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
-
     }
 
     @Override
@@ -155,7 +154,6 @@ public class ManageFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -170,7 +168,6 @@ public class ManageFragment extends Fragment implements View.OnClickListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
-
 
     //===================================================
 

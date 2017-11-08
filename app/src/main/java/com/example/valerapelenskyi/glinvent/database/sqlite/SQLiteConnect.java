@@ -52,36 +52,6 @@ public class SQLiteConnect {
         return sqLiteDatabase;
     }
 
-    // ================= getAllItemsFromSQLite =====================================================
-    public List<Device> getAllItemsFromSQLite(){
-       Log.d(Const.TAG_LOG, "SQLiteConnect getAllItemsFromSQLite");
-       List<Device> devices = new ArrayList<Device>();
-        Cursor cursor = sqLiteDatabase.query(DBHelper.TABLE_NAME, null,null,null,null,null, null);
-
-        if(cursor.moveToFirst()){
-            Log.d(Const.TAG_LOG, "table has "+String.valueOf(cursor.getCount())+" rows");
-            for (cursor.isFirst(); !cursor.isAfterLast();cursor.moveToNext()) {
-                devices.add(
-                        new Device(
-                                cursor.getInt(cursor.getColumnIndex(DBHelper.KEY_ID)),
-                                cursor.getString(cursor.getColumnIndex(DBHelper.KEY_NUMBER)),
-                                cursor.getString(cursor.getColumnIndex(DBHelper.KEY_ITEM)),
-                                cursor.getString(cursor.getColumnIndex(DBHelper.KEY_NAME_WKS)),
-                                cursor.getString(cursor.getColumnIndex(DBHelper.KEY_OWNER)),
-                                cursor.getString(cursor.getColumnIndex(DBHelper.KEY_LOCATION)),
-                                cursor.getString(cursor.getColumnIndex(DBHelper.KEY_STATUS_INVENT)),
-                                cursor.getInt(cursor.getColumnIndex(DBHelper.KEY_STATUS_SYNC)),
-                                cursor.getString(cursor.getColumnIndex(DBHelper.KEY_DESCRIPTION))
-                        )
-                );
-            }
-        }else{
-            Log.d(Const.TAG_LOG, "row = "+String.valueOf(cursor.getCount()));
-        }
-
-        cursor.close();
-        return devices;
-    }
 
     // ================= insertAllItemToSQList =====================================================
     public void insertAllItemToSQList(List<Device> devices) {
@@ -135,9 +105,17 @@ public class SQLiteConnect {
 
     }
 
-
-
     // ================= getAllItemsFromSQLite =====================================================
+    public List<Device> getAllItemsFromSQLite(){
+        Log.d(Const.TAG_LOG, "SQLiteConnect getAllItemsFromSQLite");
+        List<Device> devices = new ArrayList<Device>();
+        Cursor cursor = sqLiteDatabase.query(DBHelper.TABLE_NAME, null,null,null,null,null, null);
+        devices=wrapperDevices(cursor);
+        cursor.close();
+        return devices;
+    }
+
+    // ================= getItemFromSQLite =========================================================
     public Device getItemFromSQLite(String number){
         Log.d(Const.TAG_LOG, "SQLiteConnect getItemFromSQLite");
         Device device = null;
@@ -145,28 +123,26 @@ public class SQLiteConnect {
         String select = DBHelper.KEY_NUMBER+" = ? ";
         //Device devices = new Device();
         Cursor cursor = sqLiteDatabase.query(DBHelper.TABLE_NAME, null, select,  selectArgs,null,null, null);
-
-        if(cursor.moveToFirst()){
-            Log.d(Const.TAG_LOG, "number is find  "+String.valueOf(cursor.getCount())+" rows");
-            Log.d(Const.TAG_LOG, "cursor.toString()  "+ cursor.toString() +" rows");
-            device =  new Device(
-                    cursor.getInt(cursor.getColumnIndex(DBHelper.KEY_ID)),
-                    cursor.getString(cursor.getColumnIndex(DBHelper.KEY_NUMBER)),
-                    cursor.getString(cursor.getColumnIndex(DBHelper.KEY_ITEM)),
-                    cursor.getString(cursor.getColumnIndex(DBHelper.KEY_NAME_WKS)),
-                    cursor.getString(cursor.getColumnIndex(DBHelper.KEY_OWNER)),
-                    cursor.getString(cursor.getColumnIndex(DBHelper.KEY_LOCATION)),
-                    cursor.getString(cursor.getColumnIndex(DBHelper.KEY_STATUS_INVENT)),
-                    cursor.getInt(cursor.getColumnIndex(DBHelper.KEY_STATUS_SYNC)),
-                    cursor.getString(cursor.getColumnIndex(DBHelper.KEY_DESCRIPTION))
-            );
-
-        }else{
-            Log.d(Const.TAG_LOG, "row = "+String.valueOf(cursor.getCount()));
+        try {
+            device = wrapperDevices(cursor).get(0);
+        }catch (Exception e){
+            return null;
         }
-
         cursor.close();
         return device;
+    }
+    // ================= getNoSyncItemsFromSQLite ==================================================
+    public List<Device> getNoSyncItemsFromSQLite() {
+        Log.d(Const.TAG_LOG, "SQLiteConnect getNoSyncItemsFromSQLite");
+        List<Device> devices = new ArrayList<Device>();
+        Device device = null;
+
+        String[] selectArgs = new String[]{String.valueOf(Const.STATUS_SYNC_OFFLINE)};
+        String select = DBHelper.KEY_STATUS_SYNC+" = ? ";
+        Cursor cursor = sqLiteDatabase.query(DBHelper.TABLE_NAME, null, select,  selectArgs,null,null, null);
+
+        devices= wrapperDevices(cursor);
+        return devices;
     }
 
     public void updateStatusInvent(int id, int statusSyncOnline) {
@@ -179,4 +155,32 @@ public class SQLiteConnect {
         sqLiteDatabase.update(DBHelper.TABLE_NAME, contentValues, DBHelper.KEY_ID+" = ? ",whereArgs);
 
     }
+
+    private List<Device> wrapperDevices(Cursor cursor) {
+        List<Device> devices = new ArrayList<Device>();
+        if(cursor.moveToFirst()){
+            Log.d(Const.TAG_LOG, "table has "+String.valueOf(cursor.getCount())+" rows");
+            for (cursor.isFirst(); !cursor.isAfterLast();cursor.moveToNext()) {
+                devices.add(
+                        new Device(
+                                cursor.getInt(cursor.getColumnIndex(DBHelper.KEY_ID)),
+                                cursor.getString(cursor.getColumnIndex(DBHelper.KEY_NUMBER)),
+                                cursor.getString(cursor.getColumnIndex(DBHelper.KEY_ITEM)),
+                                cursor.getString(cursor.getColumnIndex(DBHelper.KEY_NAME_WKS)),
+                                cursor.getString(cursor.getColumnIndex(DBHelper.KEY_OWNER)),
+                                cursor.getString(cursor.getColumnIndex(DBHelper.KEY_LOCATION)),
+                                cursor.getString(cursor.getColumnIndex(DBHelper.KEY_STATUS_INVENT)),
+                                cursor.getInt(cursor.getColumnIndex(DBHelper.KEY_STATUS_SYNC)),
+                                cursor.getString(cursor.getColumnIndex(DBHelper.KEY_DESCRIPTION))
+                        )
+                );
+            }
+        }else{
+            Log.d(Const.TAG_LOG, "row = "+String.valueOf(cursor.getCount()));
+        }
+
+        return devices;
+    }
+
+
 }

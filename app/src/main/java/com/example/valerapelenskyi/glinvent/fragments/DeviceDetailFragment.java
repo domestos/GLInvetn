@@ -64,6 +64,7 @@ public class DeviceDetailFragment extends Fragment {
         EditText edOwner = view.findViewById(R.id.edOwner);
         EditText edLocation = view.findViewById(R.id.edLocation);
         EditText edDescription = view.findViewById(R.id.edDescription);
+
         tvNumber.setText(mDevice.getNumber());
         tvItem.setText(mDevice.getItem());
         edOwner.setText(mDevice.getOwner());

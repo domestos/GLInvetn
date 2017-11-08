@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,6 +52,7 @@ public class CheckFragment extends Fragment implements View.OnClickListener {
     private TextView tvMySQL;
     private TextView tvOwner;
     private TextView tvLocation;
+    private LinearLayout linearLayout;
     private String TAG = "TAG_LOG";
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -104,6 +106,9 @@ public class CheckFragment extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_check, container, false);
+
+        linearLayout = view.findViewById(R.id.id_fined_details);
+        linearLayout.setVisibility(View.INVISIBLE);
 
         tvNumber = view.findViewById(R.id.tvNumber);
         etNumber = view.findViewById(R.id.etNumber);
@@ -183,13 +188,20 @@ public class CheckFragment extends Fragment implements View.OnClickListener {
                 tvMySQL.setTextColor(Color.BLACK);
 
                 Log.d(TAG, "onClick: tvNumber = "+etNumber.getText().toString());
+
                 device = SQLiteConnect.getInstance(getContext()).getItemFromSQLite(etNumber.getText().toString());
                 if(device !=null) {
+                    linearLayout.setVisibility(View.VISIBLE);
                     tvNumber.setText(device.getNumber());
                     tvItem.setText(device.getItem());
                     tvOwner.setText(device.getOwner());
                     tvLocation.setText(device.getLocation());
 
+                    if(!device.getStatusInvent().isEmpty()){
+                        btnSetChecked.setVisibility(View.INVISIBLE);
+                    }else {
+                        btnSetChecked.setVisibility(View.VISIBLE);
+                    }
 
                     if(device.getStatusInvent().equals("ok")){
                         tvSQLite.setTextColor(Color.GREEN);
@@ -202,7 +214,8 @@ public class CheckFragment extends Fragment implements View.OnClickListener {
                         tvMySQL.setTextColor(Color.RED);
                     }
                 }else {
-                    Toast.makeText(getActivity(), "Result null", Toast.LENGTH_LONG).show();
+                    linearLayout.setVisibility(View.INVISIBLE);
+                    Toast.makeText(getActivity(), "NOT FOUND. Result null", Toast.LENGTH_LONG).show();
                 }
                 break;
             case R.id.btnSetChecked:
@@ -226,6 +239,8 @@ public class CheckFragment extends Fragment implements View.OnClickListener {
                                 // inset to SQLite SATATUS_ONLINE
                                 SQLiteConnect.getInstance(getContext()).updateStatusInvent(device.getId(),STATUS_SYNC_ONLINE);
                             }
+                            tvMySQL.setTextColor(Color.GREEN);
+                            tvSQLite.setTextColor(Color.GREEN);
                         }
                     },
                     new Response.ErrorListener() {
@@ -233,6 +248,8 @@ public class CheckFragment extends Fragment implements View.OnClickListener {
                         public void onErrorResponse(VolleyError error) {
                             Toast.makeText(getActivity(),"ERROR "+error.getMessage(),Toast.LENGTH_LONG).show();
                             SQLiteConnect.getInstance(getContext()).updateStatusInvent(device.getId(),STATUS_SYNC_OFFLINE);
+                            tvMySQL.setTextColor(Color.RED);
+                            tvSQLite.setTextColor(Color.GREEN);
                         }
                     }
             ){
