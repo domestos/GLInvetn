@@ -1,21 +1,26 @@
 package com.example.valerapelenskyi.glinvent.fragments;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.TimeUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.example.valerapelenskyi.glinvent.R;
 import com.example.valerapelenskyi.glinvent.database.mysql.MySQLConnect;
 import com.example.valerapelenskyi.glinvent.database.sqlite.SQLiteConnect;
@@ -26,8 +31,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.Time;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static android.content.ContentValues.TAG;
+import static com.example.valerapelenskyi.glinvent.model.constants.Const.STATUS_SYNC_OFFLINE;
 
 /**
  * A fragment representing a list of Items.
@@ -40,9 +51,10 @@ public class SyncListFragment extends Fragment {
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
+    private SyncListRecyclerViewAdapter syncAdapter;
     private int mColumnCount = 1;
     private OnListFragmentInteractionListenerSync mListener;
-
+    private Button btnSyncAll;
     private List<Device> devices ;
 
     /**
@@ -79,19 +91,31 @@ public class SyncListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_item_list, container, false);
 
         // Set the adapter
-        if (view instanceof RecyclerView) {
+        if (view.findViewById(R.id.list) instanceof RecyclerView) {
             Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
+            final RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.list);
             if (mColumnCount <= 1) {
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new SyncListRecyclerViewAdapter(getNoSyncItems(), mListener));
+            syncAdapter = new SyncListRecyclerViewAdapter(getNoSyncItems(), mListener);
+            recyclerView.setAdapter(syncAdapter);
+
+
+            btnSyncAll = view.findViewById(R.id.btnSyncAll);
+            btnSyncAll.setText("SYNC ALL ( "+getNoSyncItems().size()+" )");
+            btnSyncAll.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    syncAll(getNoSyncItems(), recyclerView.getAdapter() );
+
+                }
+            });
         }
+
         return view;
     }
-
 
 
     @Override
@@ -163,6 +187,7 @@ public class SyncListFragment extends Fragment {
         }
         return devices;
     }
+
     private JsonObjectRequest copyDataFromMySQLtoSQLite() {
         Log.d(Const.TAG_LOG, "run copyDataFromMySQLtoSQLite");
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,Const.server_url,
@@ -220,6 +245,63 @@ public class SyncListFragment extends Fragment {
 
         }
         return devices;
+    }
+
+    private void syncAll(List<Device> noSyncItems, RecyclerView.Adapter adapter) {
+        for (int i=0; noSyncItems.size()>i; i++){
+        updateItem(noSyncItems.get(i), adapter);
+        }
+    }
+
+    private void updateItem(final Device device, final RecyclerView.Adapter adapter) {
+        if(device != null) {
+            StringRequest stringRequest = new StringRequest (Request.Method.POST, Const.update_status_invent_url,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                         //   Toast.makeText(getActivity(),device.getNumber()+response.toString(),Toast.LENGTH_SHORT).show();
+
+                            int responseSuccess = getSuccess(response);
+                            if(responseSuccess !=0){
+                                // inset to SQLite SATATUS_ONLINE
+                                SQLiteConnect.getInstance(getContext()).updateStatusInvent(device.getId(), Const.STATUS_SYNC_ONLINE);
+                                syncAdapter.setDevices(getNoSyncItems());
+                                adapter.notifyDataSetChanged();
+
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(getActivity(),"ERROR "+error.getMessage(),Toast.LENGTH_SHORT).show();
+                        }
+                    }
+            ){
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> params  = new HashMap<String, String>();
+                    params.put("id", String.valueOf(device.getId()));
+                    return params;
+                }
+            };
+
+            MySQLConnect.getInstance(getContext()).addToRequestque(stringRequest);
+        }
+
+    }
+
+    private int getSuccess(String response) {
+        JSONObject jsonObject = null;
+        try {
+            jsonObject = new JSONObject(response);
+            Log.d(TAG, "getSuccess: "+ jsonObject.get("success") );
+            return (Integer) jsonObject.get("success") ;
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
 }

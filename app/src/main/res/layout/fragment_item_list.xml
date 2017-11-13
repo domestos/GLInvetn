@@ -1,16 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/list"
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:name="com.example.valerapelenskyi.glinvent.fragments.FragmentListDiveces"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginLeft="16dp"
-    android:layout_marginRight="16dp"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     app:layoutManager="LinearLayoutManager"
     tools:context="com.example.valerapelenskyi.glinvent.fragments.DevicesListFragment"
-    tools:listitem="@layout/fragment_item"
-    >
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
 
-</android.support.v7.widget.RecyclerView>
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/btnSyncAll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="SYNC ALL" />
+
+    <android.support.v7.widget.RecyclerView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        tools:listitem="@layout/fragment_item"
+    />
+
+
+
+</LinearLayout>
+
+
+
+
+
+
+
+

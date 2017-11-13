@@ -19,6 +19,14 @@ import java.util.List;
  */
 public class SyncListRecyclerViewAdapter extends RecyclerView.Adapter<SyncListRecyclerViewAdapter.ViewHolder> {
 
+    public List<Device> getDevices() {
+        return devices;
+    }
+
+    public void setDevices(List<Device> devices) {
+        this.devices = devices;
+    }
+
     private List<Device> devices ;
     private final SyncListFragment.OnListFragmentInteractionListenerSync mListener;
 

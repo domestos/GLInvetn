@@ -145,12 +145,12 @@ public class SQLiteConnect {
         return devices;
     }
 
-    public void updateStatusInvent(int id, int statusSyncOnline) {
+    public void updateStatusInvent(int id, int statusSync) {
         //UPDATE wp_inventor SET status_sync = "statusSyncOnline", status_invent="ok" where id = id
 
         String[] whereArgs = new String[]{String.valueOf(id)};
         ContentValues contentValues = new ContentValues();
-        contentValues.put(DBHelper.KEY_STATUS_SYNC, statusSyncOnline);
+        contentValues.put(DBHelper.KEY_STATUS_SYNC, statusSync);
         contentValues.put(DBHelper.KEY_STATUS_INVENT, "ok");
         sqLiteDatabase.update(DBHelper.TABLE_NAME, contentValues, DBHelper.KEY_ID+" = ? ",whereArgs);
 

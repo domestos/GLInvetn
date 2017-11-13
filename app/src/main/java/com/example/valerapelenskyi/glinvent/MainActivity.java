@@ -22,6 +22,7 @@ import com.example.valerapelenskyi.glinvent.fragments.CheckFragment;
 import com.example.valerapelenskyi.glinvent.fragments.DeviceDetailFragment;
 import com.example.valerapelenskyi.glinvent.fragments.DevicesListFragment;
 import com.example.valerapelenskyi.glinvent.fragments.ManageFragment;
+import com.example.valerapelenskyi.glinvent.fragments.QRScannerFragment;
 import com.example.valerapelenskyi.glinvent.fragments.SyncListFragment;
 import com.example.valerapelenskyi.glinvent.model.Device;
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -33,7 +34,8 @@ public class MainActivity extends AppCompatActivity
         DevicesListFragment.OnListFragmentInteractionListener,
         CheckFragment.OnFragmentInteractionListener,
         ManageFragment.OnFragmentInteractionListener,
-        SyncListFragment.OnListFragmentInteractionListenerSync
+        SyncListFragment.OnListFragmentInteractionListenerSync,
+        QRScannerFragment.OnListFragmentInteractionListenerQRScanner
         {
 
     private static final String TAG_MAFRAGMENT = "MAFragment";
@@ -42,6 +44,7 @@ public class MainActivity extends AppCompatActivity
     private ManageFragment manageFragment;
     private CheckFragment checkFragment;
     private SyncListFragment syncListFragment;
+    private QRScannerFragment qrScannerFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +60,7 @@ public class MainActivity extends AppCompatActivity
         manageFragment =new ManageFragment();
         checkFragment = new CheckFragment();
         syncListFragment = new SyncListFragment();
+        qrScannerFragment = new QRScannerFragment();
 
         prepareApp();
 
@@ -120,7 +124,7 @@ public class MainActivity extends AppCompatActivity
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 
         if (id == R.id.nav_qrScanner) {
-            fragmentTransaction.replace(R.id.nav_conteiner, devicesListFragment);
+            fragmentTransaction.replace(R.id.nav_conteiner, qrScannerFragment);
         } else if (id == R.id.nav_inventorization) {
             fragmentTransaction.replace(R.id.nav_conteiner, checkFragment);
         } else if (id == R.id.nav_need_to_sync) {
@@ -161,6 +165,15 @@ public class MainActivity extends AppCompatActivity
         fragmentTransaction.addToBackStack("device");
         fragmentTransaction.commit();
     }
+
+    @Override
+    public void onListFragmentInteractionQRScanner(Device device) {
+        FragmentTransaction fragmentTransaction  = getSupportFragmentManager().beginTransaction();
+        DeviceDetailFragment deviceDetailFragment = DeviceDetailFragment.newInstance(device);
+        fragmentTransaction.replace(R.id.nav_conteiner, deviceDetailFragment);
+        fragmentTransaction.addToBackStack("device");
+        fragmentTransaction.commit();
+        }
 
     @Override
     public void onListFragmentInteractionSync(Device device) {
