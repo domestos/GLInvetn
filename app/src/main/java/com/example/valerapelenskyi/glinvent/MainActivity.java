@@ -13,6 +13,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,6 +26,7 @@ import com.example.valerapelenskyi.glinvent.fragments.ManageFragment;
 import com.example.valerapelenskyi.glinvent.fragments.QRScannerFragment;
 import com.example.valerapelenskyi.glinvent.fragments.SyncListFragment;
 import com.example.valerapelenskyi.glinvent.model.Device;
+import com.example.valerapelenskyi.glinvent.model.constants.Const;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -189,39 +191,39 @@ public class MainActivity extends AppCompatActivity
 // ==================================== preparation of APP =========================================
 // Get the results From QRScan
 // THIS METHOD COMUNICATION WITH CHECKFRAGMENT
-
-@Override
-public void onActivityResult(int requestCode, int resultCode, Intent data) {
-    super.onActivityResult(requestCode,resultCode,data);
-    IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-    if (result != null) {
-        if (result.getContents() == null) {
-            Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
-        } else {
-            // INSERT RESULT INTO Device of CheckFragment.class
-            Device device = checkFragment.findDevice(result.getContents());
-
-            if(device!=null) {
-                checkFragment.setDevice(device);
-
-                checkFragment.getEtNumber().setText(checkFragment.getDevice().getNumber());
-                checkFragment.getTvNumber().setText(checkFragment.getDevice().getNumber());
-                checkFragment.getTvItem().setText(checkFragment.getDevice().getItem());
-                checkFragment.getTvOwner().setText(checkFragment.getDevice().getOwner());
-                checkFragment.getTvLocation().setText(checkFragment.getDevice().getLocation());
-            }else{
-                Toast.makeText(this, "NO FOUND OR DATA BASE IS EMPTY", Toast.LENGTH_LONG).show();
-            }
-
-         //   etNumber.setText(result.getContents());
-            // connectToURLFragment.startGetJSON(Const.URL_ADDRESS + "'" + etInventNumber.getText().toString() + "'");
-
-           Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
-        }
-    } else {
-        super.onActivityResult(requestCode, resultCode, data);
-    }
-}
+//
+//@Override
+//public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//    IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+//       super.onActivityResult(requestCode,resultCode,data);
+//    if (result != null) {
+//        if (result.getContents() == null) {
+//            Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
+//        } else {
+//            // INSERT RESULT INTO Device of CheckFragment.class
+//            Device device = checkFragment.findDevice(result.getContents());
+//
+//            if(device!=null) {
+//                checkFragment.setDevice(device);
+//
+//                checkFragment.getEtNumber().setText(checkFragment.getDevice().getNumber());
+//                checkFragment.getTvNumber().setText(checkFragment.getDevice().getNumber());
+//                checkFragment.getTvItem().setText(checkFragment.getDevice().getItem());
+//                checkFragment.getTvOwner().setText(checkFragment.getDevice().getOwner());
+//                checkFragment.getTvLocation().setText(checkFragment.getDevice().getLocation());
+//            }else{
+//                Toast.makeText(this, "NO FOUND OR DATA BASE IS EMPTY", Toast.LENGTH_LONG).show();
+//            }
+//
+//         //   etNumber.setText(result.getContents());
+//            // connectToURLFragment.startGetJSON(Const.URL_ADDRESS + "'" + etInventNumber.getText().toString() + "'");
+//
+//           Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
+//        }
+//    } else {
+//        super.onActivityResult(requestCode, resultCode, data);
+//    }
+//}
 
     private void prepareApp() {
 

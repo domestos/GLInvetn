@@ -1,6 +1,7 @@
 package com.example.valerapelenskyi.glinvent.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -25,6 +26,8 @@ import com.example.valerapelenskyi.glinvent.database.mysql.MySQLConnect;
 import com.example.valerapelenskyi.glinvent.database.sqlite.SQLiteConnect;
 import com.example.valerapelenskyi.glinvent.model.Device;
 import com.example.valerapelenskyi.glinvent.model.constants.Const;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -43,7 +46,7 @@ import static android.content.ContentValues.TAG;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListenerQRScanner}
  * interface.
  */
-public class QRScannerFragment extends Fragment {
+public class QRScannerFragment extends Fragment implements View.OnClickListener {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -51,6 +54,7 @@ public class QRScannerFragment extends Fragment {
     private SyncListRecyclerViewAdapter syncAdapter;
     private EditText etNumber;
     private Button btnSearch;
+    private Button btnScan;
     private int mColumnCount = 1;
     private OnListFragmentInteractionListenerQRScanner mListener;
     private Button btnSyncAll;
@@ -94,6 +98,7 @@ public class QRScannerFragment extends Fragment {
         if (view.findViewById(R.id.list) instanceof RecyclerView) {
             etNumber = view.findViewById(R.id.etNumber);
             btnSearch = view.findViewById(R.id.btnSearch);
+            btnScan = view.findViewById(R.id.btnScan);
             final Context context = view.getContext();
             final RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.list);
             if (mColumnCount <= 1) {
@@ -101,7 +106,7 @@ public class QRScannerFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-
+            btnScan.setOnClickListener(this);
             btnSearch.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -139,6 +144,30 @@ public class QRScannerFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.btnScan:
+                // tvUpdate.setText(mainActivityFragment.getURLRequest());
+                IntentIntegrator integrator = new IntentIntegrator(this.getActivity()) {
+                    @Override
+                    protected void startActivityForResult(Intent integrator, int code) {
+                        QRScannerFragment.this.startActivityForResult(integrator, 312); // REQUEST_CODE override
+                    }
+                };
+                integrator.initiateScan();
+                break;
+        }
+
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        etNumber.setText( data.getStringExtra("SCAN_RESULT"));
+        Log.d(TAG, "onActivityResult: Fragment  requestCode ="+requestCode+" resulte " +data.getStringExtra("SCAN_RESULT"));
+
     }
 
     /**
