@@ -63,24 +63,25 @@ public class DevicesListRecyclerViewAdapter extends RecyclerView.Adapter<Devices
         return devices.size();
     }
 
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-     //   public final TextView mIdView;
+        //   public final TextView mIdView;
         public final TextView item;
         public final TextView number;
-//        public final TextView owner;
-//        public final TextView location;
-//        public final TextView description;
+        public final TextView tvOwner;
+        public final TextView tvLocation;
+        //        public final TextView description;
         public Device device;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-          //  mIdView =  view.findViewById(R.id.id);
+            //  mIdView =  view.findViewById(R.id.id);
             item = (TextView) view.findViewById(R.id.item);
             number = (TextView) view.findViewById(R.id.number);
-//            owner = (TextView) view.findViewById(R.id.owner);
-//            location = (TextView) view.findViewById(R.id.location);
+            tvOwner = (TextView) view.findViewById(R.id.tvOwner);
+            tvLocation = (TextView) view.findViewById(R.id.tvLocation);
 //            description = (TextView) view.findViewById(R.id.description);
         }
 

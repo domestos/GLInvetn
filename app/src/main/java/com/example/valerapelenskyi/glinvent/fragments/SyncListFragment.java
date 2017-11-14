@@ -267,7 +267,6 @@ public class SyncListFragment extends Fragment {
                                 SQLiteConnect.getInstance(getContext()).updateStatusInvent(device.getId(), Const.STATUS_SYNC_ONLINE);
                                 syncAdapter.setDevices(getNoSyncItems());
                                 adapter.notifyDataSetChanged();
-
                             }
                         }
                     },

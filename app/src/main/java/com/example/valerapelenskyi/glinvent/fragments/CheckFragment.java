@@ -1,6 +1,7 @@
 package com.example.valerapelenskyi.glinvent.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -31,6 +32,8 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -177,46 +180,16 @@ public class CheckFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnScan:
-            // tvUpdate.setText(mainActivityFragment.getURLRequest());
-                IntentIntegrator scanIntegrator = new IntentIntegrator(this.getActivity());
-                scanIntegrator.setTitle("GAMELOFT");
+                IntentIntegrator scanIntegrator = new IntentIntegrator(this.getActivity()) {
+                    @Override
+                    protected void startActivityForResult(Intent integrator, int code) {
+                        CheckFragment.this.startActivityForResult(integrator, 312); // REQUEST_CODE override
+                    }
+                };
                 scanIntegrator.initiateScan();
                 break;
             case R.id.btnSearch:
-                device = null;
-                tvSQLite.setTextColor(Color.BLACK);
-                tvMySQL.setTextColor(Color.BLACK);
-
-                Log.d(TAG, "onClick: tvNumber = "+etNumber.getText().toString());
-
-                device = SQLiteConnect.getInstance(getContext()).getItemFromSQLite(etNumber.getText().toString());
-                if(device !=null) {
-                    linearLayout.setVisibility(View.VISIBLE);
-                    tvNumber.setText(device.getNumber());
-                    tvItem.setText(device.getItem());
-                    tvOwner.setText(device.getOwner());
-                    tvLocation.setText(device.getLocation());
-
-                    if(!device.getStatusInvent().isEmpty()){
-                        btnSetChecked.setVisibility(View.INVISIBLE);
-                    }else {
-                        btnSetChecked.setVisibility(View.VISIBLE);
-                    }
-
-                    if(device.getStatusInvent().equals("ok")){
-                        tvSQLite.setTextColor(Color.GREEN);
-                    }
-                    if(device.getStatusSync() == STATUS_SYNC_ONLINE && device.getStatusInvent().equals("ok") ){
-                        tvMySQL.setTextColor(Color.GREEN);
-                    }
-
-                    if(device.getStatusSync() == STATUS_SYNC_OFFLINE && device.getStatusInvent().equals("ok") ){
-                        tvMySQL.setTextColor(Color.RED);
-                    }
-                }else {
-                    linearLayout.setVisibility(View.INVISIBLE);
-                    Toast.makeText(getActivity(), "NOT FOUND. Result null", Toast.LENGTH_LONG).show();
-                }
+                findNumber();
                 break;
             case R.id.btnSetChecked:
                     updateItem(device);
@@ -224,6 +197,51 @@ public class CheckFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        etNumber.setText( data.getStringExtra("SCAN_RESULT"));
+        Log.d(TAG, "onActivityResult: Fragment  requestCode ="+requestCode+" resulte " +data.getStringExtra("SCAN_RESULT"));
+        findNumber();
+    }
+
+    private void findNumber() {
+        device = null;
+        tvSQLite.setTextColor(Color.BLACK);
+        tvMySQL.setTextColor(Color.BLACK);
+
+        Log.d(TAG, "onClick: tvNumber = "+etNumber.getText().toString());
+
+        device = SQLiteConnect.getInstance(getContext()).getItemFromSQLite(etNumber.getText().toString());
+        if(device !=null) {
+            linearLayout.setVisibility(View.VISIBLE);
+            tvNumber.setText(device.getNumber());
+            tvItem.setText(device.getItem());
+            tvOwner.setText(device.getOwner());
+            tvLocation.setText(device.getLocation());
+
+            if(!device.getStatusInvent().isEmpty()){
+                btnSetChecked.setVisibility(View.INVISIBLE);
+            }else {
+                btnSetChecked.setVisibility(View.VISIBLE);
+            }
+
+            if(device.getStatusInvent().equals("ok")){
+                tvSQLite.setTextColor(Color.GREEN);
+            }
+            if(device.getStatusSync() == STATUS_SYNC_ONLINE && device.getStatusInvent().equals("ok") ){
+                tvMySQL.setTextColor(Color.GREEN);
+            }
+
+            if(device.getStatusSync() == STATUS_SYNC_OFFLINE && device.getStatusInvent().equals("ok") ){
+                tvMySQL.setTextColor(Color.RED);
+            }
+        }else {
+            linearLayout.setVisibility(View.INVISIBLE);
+            Toast.makeText(getActivity(), "NOT FOUND. Result null", Toast.LENGTH_LONG).show();
+        }
+
+    }
 
 
     private void updateItem(final Device device1) {

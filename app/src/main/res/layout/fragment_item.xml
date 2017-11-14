@@ -1,9 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
+
+    <TextView
+        android:id="@+id/number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:textAlignment="center"
+        android:textAppearance="?attr/textAppearanceListItem"
+        android:textSize="24sp"
+        tools:text="number" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -11,29 +22,22 @@
         android:orientation="horizontal">
 
         <!--<TextView-->
-            <!--android:id="@+id/id"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_margin="@dimen/text_margin"-->
-            <!--android:layout_weight="1"-->
-            <!--android:textAppearance="?attr/textAppearanceListItem" />-->
-
-        <TextView
-            android:id="@+id/number"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/text_margin"
-            android:layout_weight="1"
-            android:textAppearance="?attr/textAppearanceListItem" />
+        <!--android:id="@+id/id"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_margin="@dimen/text_margin"-->
+        <!--android:layout_weight="1"-->
+        <!--android:textAppearance="?attr/textAppearanceListItem" />-->
 
 
         <TextView
             android:id="@+id/item"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/text_margin"
             android:layout_weight="1"
-            android:textAppearance="?attr/textAppearanceListItem" />
+            android:textAlignment="textStart"
+            android:textAppearance="?attr/textAppearanceListItem"
+            tools:text="item" />
 
     </LinearLayout>
 
@@ -42,44 +46,59 @@
         android:layout_height="match_parent"
         android:orientation="horizontal">
 
+        <TextView
+            android:id="@+id/tvLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textAlignment="center"
+            tools:text="Location" />
+
+        <TextView
+            android:id="@+id/tvOwner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textAlignment="center"
+            tools:text="Owner" />
     </LinearLayout>
 
     <!--<LinearLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:orientation="horizontal">-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:orientation="horizontal">-->
 
-        <!--<TextView-->
-            <!--android:id="@+id/owner"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_margin="@dimen/text_margin"-->
-            <!--android:layout_weight="1"-->
-            <!--android:textAppearance="?attr/textAppearanceListItem" />-->
+    <!--<TextView-->
+    <!--android:id="@+id/owner"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_margin="@dimen/text_margin"-->
+    <!--android:layout_weight="1"-->
+    <!--android:textAppearance="?attr/textAppearanceListItem" />-->
 
-        <!--<TextView-->
-            <!--android:id="@+id/location"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_margin="@dimen/text_margin"-->
-            <!--android:layout_weight="1"-->
-            <!--android:textAppearance="?attr/textAppearanceListItem" />-->
+    <!--<TextView-->
+    <!--android:id="@+id/location"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_margin="@dimen/text_margin"-->
+    <!--android:layout_weight="1"-->
+    <!--android:textAppearance="?attr/textAppearanceListItem" />-->
 
     <!--</LinearLayout>-->
 
     <!--<LinearLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:layout_weight="1"-->
-        <!--android:orientation="horizontal">-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:layout_weight="1"-->
+    <!--android:orientation="horizontal">-->
 
-        <!--<TextView-->
-            <!--android:id="@+id/description"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_margin="@dimen/text_margin"-->
-            <!--android:layout_weight="1"-->
-            <!--android:textAppearance="?attr/textAppearanceListItem" />-->
+    <!--<TextView-->
+    <!--android:id="@+id/description"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_margin="@dimen/text_margin"-->
+    <!--android:layout_weight="1"-->
+    <!--android:textAppearance="?attr/textAppearanceListItem" />-->
     <!--</LinearLayout>-->
 
 </LinearLayout>

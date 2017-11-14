@@ -60,6 +60,7 @@ public class QRScannerFragment extends Fragment implements View.OnClickListener 
     private Button btnSyncAll;
     private Device device;
     private List<Device> devices ;
+    private RecyclerView recyclerView;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -81,13 +82,11 @@ public class QRScannerFragment extends Fragment implements View.OnClickListener 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        showListView();
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
-
-
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -99,6 +98,7 @@ public class QRScannerFragment extends Fragment implements View.OnClickListener 
             etNumber = view.findViewById(R.id.etNumber);
             btnSearch = view.findViewById(R.id.btnSearch);
             btnScan = view.findViewById(R.id.btnScan);
+            recyclerView = view.findViewById(R.id.list);
             final Context context = view.getContext();
             final RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.list);
             if (mColumnCount <= 1) {
@@ -106,25 +106,10 @@ public class QRScannerFragment extends Fragment implements View.OnClickListener 
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
+
             btnScan.setOnClickListener(this);
-            btnSearch.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                device= SQLiteConnect.getInstance(context).getItemFromSQLite(etNumber.getText().toString());
-                    if(device != null){
-                        devices.clear();
-                        devices.add(device);
-                        recyclerView.setAdapter(new QRScannerListRecyclerViewAdapter(devices, mListener));
-
-                    }else {
-                        Toast.makeText(context,"No find", Toast.LENGTH_LONG).show();
-                    }
-
-                }
-            });
+            btnSearch.setOnClickListener(this);
         }
-
         return view;
     }
 
@@ -150,8 +135,7 @@ public class QRScannerFragment extends Fragment implements View.OnClickListener 
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btnScan:
-                // tvUpdate.setText(mainActivityFragment.getURLRequest());
-                IntentIntegrator integrator = new IntentIntegrator(this.getActivity()) {
+                    IntentIntegrator integrator = new IntentIntegrator(this.getActivity()) {
                     @Override
                     protected void startActivityForResult(Intent integrator, int code) {
                         QRScannerFragment.this.startActivityForResult(integrator, 312); // REQUEST_CODE override
@@ -159,16 +143,37 @@ public class QRScannerFragment extends Fragment implements View.OnClickListener 
                 };
                 integrator.initiateScan();
                 break;
+            case R.id.btnSearch:
+                findNumber();
+                break;
+
         }
 
+    }
+
+    private void findNumber() {
+        device= SQLiteConnect.getInstance(getContext()).getItemFromSQLite(etNumber.getText().toString());
+        if(device != null){
+            if(devices == null){
+                devices = new ArrayList<Device>();
+            }
+            devices.clear();
+            devices.add(device);
+            recyclerView.setAdapter(new QRScannerListRecyclerViewAdapter(devices, mListener));
+
+        }else {
+            Toast.makeText(getContext(),"No find", Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         etNumber.setText( data.getStringExtra("SCAN_RESULT"));
         Log.d(TAG, "onActivityResult: Fragment  requestCode ="+requestCode+" resulte " +data.getStringExtra("SCAN_RESULT"));
-
+        findNumber();
     }
+
+
 
     /**
      * This interface must be implemented by activities that contain this
@@ -185,29 +190,6 @@ public class QRScannerFragment extends Fragment implements View.OnClickListener 
         void onListFragmentInteractionQRScanner(Device device);
     }
 
-    //need get list of devices
-    public void showListView() {
-        Log.d(Const.TAG_LOG, "run showListView ");
-        devices = getAllItemFromSQLite();
-        if(devices == null){
-            //якщо в SQLite немає записів то скопіювати їх
-            copyDataFromMySQLtoSQLite();
-        }
-    }
-
-    private List<Device> getAllItemFromSQLite() {
-        Log.d(Const.TAG_LOG, "run getAllItemFromSQLite ");
-        devices = SQLiteConnect.getInstance(getContext()).getAllItemsFromSQLite();
-
-        if(devices.size() <=0){
-            //getContext().tvResponse.setText("SQLite база пуста. Скопіювати базу з MYSQL ?");
-            Toast.makeText(getContext(), "SQLite => Tabele isEmpty", Toast.LENGTH_SHORT).show();
-          //  return null;
-            copyDataFromMySQLtoSQLite();
-
-        }
-        return devices;
-    }
 
     private List<Device> getNoSyncItems() {
         Log.d(Const.TAG_LOG, "run getNoSyncItems ");
@@ -221,36 +203,6 @@ public class QRScannerFragment extends Fragment implements View.OnClickListener 
 
         }
         return devices;
-    }
-
-    private JsonObjectRequest copyDataFromMySQLtoSQLite() {
-        Log.d(Const.TAG_LOG, "run copyDataFromMySQLtoSQLite");
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,Const.server_url,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        devices = getArrayDevices(response);
-                        try {
-
-                            SQLiteConnect.getInstance(getContext()).insertAllItemToSQList(devices);
-                        }catch (RuntimeException e){
-                            Log.e(Const.TAG_LOG, "catch " + e.getMessage());
-                        }
-
-                    }
-
-
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getContext(), "COPY DATA BASE from MYSQL to SQLite", Toast.LENGTH_SHORT).show();
-                    }
-                }
-        );
-
-        MySQLConnect.getInstance(getContext().getApplicationContext()).addToRequestque(jsonObjectRequest);
-        return jsonObjectRequest;
     }
 
     private ArrayList<Device> getArrayDevices(JSONObject response) {
@@ -280,12 +232,6 @@ public class QRScannerFragment extends Fragment implements View.OnClickListener 
 
         }
         return devices;
-    }
-
-    private void syncAll(List<Device> noSyncItems, RecyclerView.Adapter adapter) {
-        for (int i=0; noSyncItems.size()>i; i++){
-        updateItem(noSyncItems.get(i), adapter);
-        }
     }
 
     private void updateItem(final Device device, final RecyclerView.Adapter adapter) {
