@@ -59,7 +59,7 @@ public class QRScannerFragment extends Fragment implements View.OnClickListener 
     private OnListFragmentInteractionListenerQRScanner mListener;
     private Button btnSyncAll;
     private Device device;
-    private List<Device> devices ;
+    private List<Device> devices;
     private RecyclerView recyclerView;
 
     /**
@@ -135,7 +135,7 @@ public class QRScannerFragment extends Fragment implements View.OnClickListener 
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btnScan:
-                    IntentIntegrator integrator = new IntentIntegrator(this.getActivity()) {
+                IntentIntegrator integrator = new IntentIntegrator(this.getActivity()) {
                     @Override
                     protected void startActivityForResult(Intent integrator, int code) {
                         QRScannerFragment.this.startActivityForResult(integrator, 312); // REQUEST_CODE override
@@ -152,27 +152,30 @@ public class QRScannerFragment extends Fragment implements View.OnClickListener 
     }
 
     private void findNumber() {
-        device= SQLiteConnect.getInstance(getContext()).getItemFromSQLite(etNumber.getText().toString());
-        if(device != null){
-            if(devices == null){
+        device = SQLiteConnect.getInstance(getContext()).getItemFromSQLite(etNumber.getText().toString());
+        if (device != null) {
+            if (devices == null) {
                 devices = new ArrayList<Device>();
             }
             devices.clear();
             devices.add(device);
             recyclerView.setAdapter(new QRScannerListRecyclerViewAdapter(devices, mListener));
 
-        }else {
-            Toast.makeText(getContext(),"No find", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(getContext(), "No find", Toast.LENGTH_LONG).show();
         }
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        etNumber.setText( data.getStringExtra("SCAN_RESULT"));
-        Log.d(TAG, "onActivityResult: Fragment  requestCode ="+requestCode+" resulte " +data.getStringExtra("SCAN_RESULT"));
-        findNumber();
+        if (data == null) {
+            etNumber.setText(data.getStringExtra("SCAN_RESULT"));
+            Log.d(TAG, "onActivityResult: Fragment  requestCode =" + requestCode + " resulte " + data.getStringExtra("SCAN_RESULT"));
+            findNumber();
+        } else {
+            Toast.makeText(getContext(), "Canceled", Toast.LENGTH_SHORT).show();
+        }
     }
-
 
 
     /**
@@ -195,11 +198,11 @@ public class QRScannerFragment extends Fragment implements View.OnClickListener 
         Log.d(Const.TAG_LOG, "run getNoSyncItems ");
         devices = SQLiteConnect.getInstance(getContext()).getNoSyncItemsFromSQLite();
 
-        if(devices==null){
+        if (devices == null) {
             //getContext().tvResponse.setText("SQLite база пуста. Скопіювати базу з MYSQL ?");
             Toast.makeText(getContext(), "SQLite => Tabele isEmpty", Toast.LENGTH_SHORT).show();
             //  return null;
-       //     copyDataFromMySQLtoSQLite();
+            //     copyDataFromMySQLtoSQLite();
 
         }
         return devices;
@@ -208,9 +211,9 @@ public class QRScannerFragment extends Fragment implements View.OnClickListener 
     private ArrayList<Device> getArrayDevices(JSONObject response) {
         ArrayList<Device> devices = new ArrayList<Device>();
         try {
-            if(response.get("success").equals(1)){
+            if (response.get("success").equals(1)) {
                 JSONArray products = (JSONArray) response.get("products");
-                for (int i=0; i < products.length(); i++){
+                for (int i = 0; i < products.length(); i++) {
                     JSONObject JO = (JSONObject) products.get(i);
                     devices.add(new Device(
                             JO.getInt("id"),
@@ -222,7 +225,7 @@ public class QRScannerFragment extends Fragment implements View.OnClickListener 
                             JO.getString("status_invent"),
                             JO.getInt("status_sync"),
                             JO.getString("description")
-                    ))  ;
+                    ));
                 }
 
             }
@@ -235,15 +238,15 @@ public class QRScannerFragment extends Fragment implements View.OnClickListener 
     }
 
     private void updateItem(final Device device, final RecyclerView.Adapter adapter) {
-        if(device != null) {
-            StringRequest stringRequest = new StringRequest (Request.Method.POST, Const.update_status_invent_url,
+        if (device != null) {
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, Const.update_status_invent_url,
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
-                         //   Toast.makeText(getActivity(),device.getNumber()+response.toString(),Toast.LENGTH_SHORT).show();
+                            //   Toast.makeText(getActivity(),device.getNumber()+response.toString(),Toast.LENGTH_SHORT).show();
 
                             int responseSuccess = getSuccess(response);
-                            if(responseSuccess !=0){
+                            if (responseSuccess != 0) {
                                 // inset to SQLite SATATUS_ONLINE
                                 SQLiteConnect.getInstance(getContext()).updateStatusInvent(device.getId(), Const.STATUS_SYNC_ONLINE);
                                 syncAdapter.setDevices(getNoSyncItems());
@@ -255,13 +258,13 @@ public class QRScannerFragment extends Fragment implements View.OnClickListener 
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            Toast.makeText(getActivity(),"ERROR "+error.getMessage(),Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "ERROR " + error.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }
-            ){
+            ) {
                 @Override
                 protected Map<String, String> getParams() throws AuthFailureError {
-                    Map<String, String> params  = new HashMap<String, String>();
+                    Map<String, String> params = new HashMap<String, String>();
                     params.put("id", String.valueOf(device.getId()));
                     return params;
                 }
@@ -276,8 +279,8 @@ public class QRScannerFragment extends Fragment implements View.OnClickListener 
         JSONObject jsonObject = null;
         try {
             jsonObject = new JSONObject(response);
-            Log.d(TAG, "getSuccess: "+ jsonObject.get("success") );
-            return (Integer) jsonObject.get("success") ;
+            Log.d(TAG, "getSuccess: " + jsonObject.get("success"));
+            return (Integer) jsonObject.get("success");
 
         } catch (JSONException e) {
             e.printStackTrace();

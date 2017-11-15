@@ -200,9 +200,13 @@ public class CheckFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        etNumber.setText( data.getStringExtra("SCAN_RESULT"));
-        Log.d(TAG, "onActivityResult: Fragment  requestCode ="+requestCode+" resulte " +data.getStringExtra("SCAN_RESULT"));
-        findNumber();
+        if(data != null){
+            etNumber.setText( data.getStringExtra("SCAN_RESULT"));
+            Log.d(TAG, "onActivityResult: Fragment  requestCode ="+requestCode+" resulte " +data.getStringExtra("SCAN_RESULT"));
+            findNumber();
+        }else {
+            Toast.makeText(getContext(), "Canceled", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void findNumber() {
