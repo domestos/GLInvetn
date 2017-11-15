@@ -1,14 +1,18 @@
 package com.example.valerapelenskyi.glinvent.fragments;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
+import android.opengl.ETC1;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,6 +20,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.example.valerapelenskyi.glinvent.MainActivity;
 import com.example.valerapelenskyi.glinvent.R;
 import com.example.valerapelenskyi.glinvent.database.mysql.MySQLConnect;
 import com.example.valerapelenskyi.glinvent.database.sqlite.SQLiteConnect;
@@ -28,6 +33,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -50,11 +57,14 @@ public class ManageFragment extends Fragment implements View.OnClickListener {
     private SQLiteConnect sqLiteConnect;
     private MySQLConnect mySQLConnect;
 
+
     private List<Device> devicesFromSQLite;
     private List<Device> devicesFromMySQL;
     private TextView tvRowInMYSQL;
     private TextView tvRowInSQLite;
+    private EditText etURL;
     private Button btnInsertToSQLite;
+    private Button btnSave;
 
     public ManageFragment() {
         // Required empty public constructor
@@ -95,11 +105,6 @@ public class ManageFragment extends Fragment implements View.OnClickListener {
             Log.d(TAG, "onCreate: devicesFromSQLite NULL");
         }
 
-
-//        if (getAllItemsFromMySQL() == null) {
-//            mParam1 = getArguments().getString(ARG_PARAM1);
-//           }
-
     }
 
     @Override
@@ -107,6 +112,9 @@ public class ManageFragment extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_manage, container, false);
+        etURL = view.findViewById(R.id.etURL);
+        etURL.setText(Const.url_host);
+
         tvRowInSQLite = view.findViewById(R.id.tvRowInSQLite);
         tvRowInSQLite.setText(String.valueOf(devicesFromSQLite.size()));
 
@@ -116,7 +124,12 @@ public class ManageFragment extends Fragment implements View.OnClickListener {
         }
         btnInsertToSQLite = view.findViewById(R.id.btnIsertTOSQLite);
         btnInsertToSQLite.setOnClickListener(this);
+
+        btnSave = view.findViewById(R.id.btnSave);
+        btnSave.setOnClickListener(this);
+
         return view;
+
 
     }
 
@@ -126,6 +139,14 @@ public class ManageFragment extends Fragment implements View.OnClickListener {
             mListener.onFragmentInteraction(uri);
         }
     }
+
+    // TODO: Rename method, update argument and hook method into UI event
+    private void saveUrlHost(String text) {
+        if (mListener != null) {
+            mListener.saveUrlHost(text);
+        }
+    }
+
 
     @Override
     public void onAttach(Context context) {
@@ -147,12 +168,20 @@ public class ManageFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         //  copyDataFromMySQLtoSQLite();
+        switch (view.getId()){
+            case R.id.btnIsertTOSQLite:
+                if (devicesFromMySQL != null) {
+                    SQLiteConnect.getInstance(getContext().getApplicationContext()).insertAllItemToSQList(devicesFromMySQL);
+                    tvRowInSQLite.setText(String.valueOf(devicesFromMySQL.size()));
+                }
+            break;
+            case R.id.btnSave:
+                saveUrlHost(etURL.getText().toString());
+                break;
 
-        if (devicesFromMySQL != null) {
-            SQLiteConnect.getInstance(getContext().getApplicationContext()).insertAllItemToSQList(devicesFromMySQL);
-            tvRowInSQLite.setText(String.valueOf(devicesFromMySQL.size()));
         }
     }
+
 
     /**
      * This interface must be implemented by activities that contain this
@@ -167,7 +196,9 @@ public class ManageFragment extends Fragment implements View.OnClickListener {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+        void saveUrlHost(String text);
     }
+
 
     //===================================================
 

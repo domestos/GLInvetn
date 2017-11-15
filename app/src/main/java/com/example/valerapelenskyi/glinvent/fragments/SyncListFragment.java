@@ -255,7 +255,7 @@ public class SyncListFragment extends Fragment {
 
     private void updateItem(final Device device, final RecyclerView.Adapter adapter) {
         if(device != null) {
-            StringRequest stringRequest = new StringRequest (Request.Method.POST, Const.update_status_invent_url,
+            StringRequest stringRequest = new StringRequest (Request.Method.POST, Const.update_item,
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
@@ -281,6 +281,10 @@ public class SyncListFragment extends Fragment {
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String> params  = new HashMap<String, String>();
                     params.put("id", String.valueOf(device.getId()));
+                    params.put("status_invent",device.getStatusInvent());
+                    params.put("owner", device.getOwner());
+                    params.put("location", device.getLocation());
+                    params.put("description", device.getDescription());
                     return params;
                 }
             };

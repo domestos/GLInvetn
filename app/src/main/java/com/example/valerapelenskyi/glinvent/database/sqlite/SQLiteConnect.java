@@ -136,24 +136,32 @@ public class SQLiteConnect {
         Log.d(Const.TAG_LOG, "SQLiteConnect getNoSyncItemsFromSQLite");
         List<Device> devices = new ArrayList<Device>();
         Device device = null;
-
         String[] selectArgs = new String[]{String.valueOf(Const.STATUS_SYNC_OFFLINE)};
         String select = DBHelper.KEY_STATUS_SYNC+" = ? ";
         Cursor cursor = sqLiteDatabase.query(DBHelper.TABLE_NAME, null, select,  selectArgs,null,null, null);
-
         devices= wrapperDevices(cursor);
         return devices;
     }
 
     public void updateStatusInvent(int id, int statusSync) {
         //UPDATE wp_inventor SET status_sync = "statusSyncOnline", status_invent="ok" where id = id
-
         String[] whereArgs = new String[]{String.valueOf(id)};
         ContentValues contentValues = new ContentValues();
         contentValues.put(DBHelper.KEY_STATUS_SYNC, statusSync);
         contentValues.put(DBHelper.KEY_STATUS_INVENT, "ok");
         sqLiteDatabase.update(DBHelper.TABLE_NAME, contentValues, DBHelper.KEY_ID+" = ? ",whereArgs);
 
+    }
+
+    public void updateItem(Device device, int statusSync) {
+        //UPDATE wp_inventor SET status_sync = "statusSyncOnline", status_invent="ok" where id = id
+        String[] whereArgs = new String[]{String.valueOf(device.getId())};
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DBHelper.KEY_STATUS_SYNC, statusSync);
+        contentValues.put(DBHelper.KEY_OWNER, device.getOwner());
+        contentValues.put(DBHelper.KEY_LOCATION, device.getLocation());
+        contentValues.put(DBHelper.KEY_DESCRIPTION, device.getDescription());
+        sqLiteDatabase.update(DBHelper.TABLE_NAME, contentValues, DBHelper.KEY_ID+" = ? ",whereArgs);
     }
 
     private List<Device> wrapperDevices(Cursor cursor) {
@@ -178,7 +186,6 @@ public class SQLiteConnect {
         }else{
             Log.d(Const.TAG_LOG, "row = "+String.valueOf(cursor.getCount()));
         }
-
         return devices;
     }
 

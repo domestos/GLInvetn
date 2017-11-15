@@ -2,6 +2,7 @@ package com.example.valerapelenskyi.glinvent;
 
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -13,6 +14,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,8 +39,7 @@ public class MainActivity extends AppCompatActivity
         CheckFragment.OnFragmentInteractionListener,
         ManageFragment.OnFragmentInteractionListener,
         SyncListFragment.OnListFragmentInteractionListenerSync,
-        QRScannerFragment.OnListFragmentInteractionListenerQRScanner
-        {
+        QRScannerFragment.OnListFragmentInteractionListenerQRScanner{
 
     private static final String TAG_MAFRAGMENT = "MAFragment";
     public MainActivityFragment maFragment ;
@@ -47,10 +48,13 @@ public class MainActivity extends AppCompatActivity
     private CheckFragment checkFragment;
     private SyncListFragment syncListFragment;
     private QRScannerFragment qrScannerFragment;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(Const.TAG_LOG, "onCreate: loadUrlHost()="+loadUrlHost()+" full URL "+Const.server_url);
+        loadUrlHost();
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -63,6 +67,7 @@ public class MainActivity extends AppCompatActivity
         checkFragment = new CheckFragment();
         syncListFragment = new SyncListFragment();
         qrScannerFragment = new QRScannerFragment();
+
 
         prepareApp();
 
@@ -187,6 +192,22 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+        @Override
+        public void saveUrlHost(String  text) {
+            Log.d(Const.TAG_LOG, "saveUrlHost run: "+text);
+            sharedPreferences  =  getPreferences(MODE_PRIVATE);
+            SharedPreferences.Editor spEdit =  sharedPreferences.edit();
+            spEdit.putString("URL", text);
+            spEdit.commit();
+        }
+
+
+    public String loadUrlHost(){
+        sharedPreferences = getPreferences(MODE_PRIVATE);
+        Const.url_host = sharedPreferences.getString("URL","");
+        Const.concatUrl(Const.url_host);
+        return Const.url_host;
+    }
 
 // ==================================== preparation of APP =========================================
 // Get the results From QRScan

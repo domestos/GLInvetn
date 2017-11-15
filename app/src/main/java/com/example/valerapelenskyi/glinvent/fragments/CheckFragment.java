@@ -274,8 +274,8 @@ public class CheckFragment extends Fragment implements View.OnClickListener {
                 @Override
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String> params  = new HashMap<String, String>();
-                    Log.d(TAG, "getParams: id = "+device1.getId());
-                    params.put("id", String.valueOf(device1.getId()));
+                    Log.d(TAG, "getParams: id = "+device.getId());
+                    params.put("status_invent", "ok");
                     return params;
                 }
             };
