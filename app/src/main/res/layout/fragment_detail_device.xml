@@ -13,14 +13,16 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:textAlignment="center"
-        android:textSize="36dp" />
+        android:textSize="36dp"
+        tools:text="Number" />
 
     <TextView
         android:id="@+id/tvItem"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:textAlignment="center" />
+        android:textAlignment="center"
+        tools:text="Item" />
 
     <EditText
         android:id="@+id/edOwner"
@@ -28,15 +30,24 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:ems="10"
-        android:inputType="number" />
+        android:inputType="number"
+        android:text="Owner" />
 
-    <EditText
-        android:id="@+id/edLocation"
+    <!--<EditText-->
+        <!--android:id="@+id/edLocation"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_weight="1"-->
+        <!--android:ems="10"-->
+        <!--android:inputType="number"-->
+        <!--tools:text="Location" />-->
+
+    <Spinner
+        android:id="@+id/spLocation"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_weight="1"
-        android:ems="10"
-        android:inputType="number" />
+        android:theme="@style/Base.TextAppearance.AppCompat.Widget.DropDownItem" />
 
     <EditText
         android:id="@+id/edDescription"
@@ -44,13 +55,14 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:ems="10"
-        android:inputType="textMultiLine" />
+        android:inputType="textMultiLine"
+        tools:text="Descriptions" />
 
     <Button
         android:id="@+id/btnSave"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Button" />
+        android:text="SAVE" />
 
 </LinearLayout>
