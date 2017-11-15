@@ -73,7 +73,7 @@ public class SQLiteConnect {
                     sqLiteStatement.bindString(4, devices.get(i).getName_wks());
                     sqLiteStatement.bindString(5, devices.get(i).getOwner());
                     sqLiteStatement.bindString(6, devices.get(i).getLocation());
-                    sqLiteStatement.bindString(7, "" );
+                    sqLiteStatement.bindString(7, devices.get(i).getStatusInvent() );
                     sqLiteStatement.bindLong(8,   Const.STATUS_SYNC_ONLINE );
                     sqLiteStatement.bindString(9, devices.get(i).getDescription());
                     sqLiteStatement.execute();
@@ -107,11 +107,15 @@ public class SQLiteConnect {
 
     // ================= getAllItemsFromSQLite =====================================================
     public List<Device> getAllItemsFromSQLite(){
-        Log.d(Const.TAG_LOG, "SQLiteConnect getAllItemsFromSQLite");
         List<Device> devices = new ArrayList<Device>();
         Cursor cursor = sqLiteDatabase.query(DBHelper.TABLE_NAME, null,null,null,null,null, null);
         devices=wrapperDevices(cursor);
         cursor.close();
+        if (devices != null) {
+            Log.d(Const.TAG_LOG, "result:  From SQLite =" + devices.size());
+        } else {
+            Log.d(Const.TAG_LOG, "result:  From SQLite NULL");
+        }
         return devices;
     }
 
@@ -167,7 +171,6 @@ public class SQLiteConnect {
     private List<Device> wrapperDevices(Cursor cursor) {
         List<Device> devices = new ArrayList<Device>();
         if(cursor.moveToFirst()){
-            Log.d(Const.TAG_LOG, "table has "+String.valueOf(cursor.getCount())+" rows");
             for (cursor.isFirst(); !cursor.isAfterLast();cursor.moveToNext()) {
                 devices.add(
                         new Device(
@@ -190,4 +193,8 @@ public class SQLiteConnect {
     }
 
 
+    public int deleteALL() {
+
+        return sqLiteDatabase.delete(DBHelper.TABLE_NAME,null,null);
+    }
 }

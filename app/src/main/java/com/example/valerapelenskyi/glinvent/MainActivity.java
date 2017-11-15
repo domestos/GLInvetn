@@ -39,10 +39,9 @@ public class MainActivity extends AppCompatActivity
         CheckFragment.OnFragmentInteractionListener,
         ManageFragment.OnFragmentInteractionListener,
         SyncListFragment.OnListFragmentInteractionListenerSync,
-        QRScannerFragment.OnListFragmentInteractionListenerQRScanner{
+        QRScannerFragment.OnListFragmentInteractionListenerQRScanner {
 
     private static final String TAG_MAFRAGMENT = "MAFragment";
-    public MainActivityFragment maFragment ;
     private DevicesListFragment devicesListFragment;
     private ManageFragment manageFragment;
     private CheckFragment checkFragment;
@@ -53,17 +52,16 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(Const.TAG_LOG, "onCreate: loadUrlHost()="+loadUrlHost()+" full URL "+Const.server_url);
-        loadUrlHost();
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        // ====init Fragment===========
-        maFragment = getMAFragment();
-        maFragment.linkToActivity(this);
+
+        loadUrlHost();
+        Log.d(Const.TAG_LOG, "onCreate: full URL " + Const.server_url);
+
         // ============================
-        devicesListFragment =  new DevicesListFragment();
-        manageFragment =new ManageFragment();
+        devicesListFragment = new DevicesListFragment();
+        manageFragment = new ManageFragment();
         checkFragment = new CheckFragment();
         syncListFragment = new SyncListFragment();
         qrScannerFragment = new QRScannerFragment();
@@ -153,20 +151,11 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-
     //==============================================================================================
-    public MainActivityFragment getMAFragment() {
-        maFragment = (MainActivityFragment) getFragmentManager().findFragmentByTag(TAG_MAFRAGMENT);
-        if(maFragment == null){
-            maFragment = new MainActivityFragment();
-            getFragmentManager().beginTransaction().add(maFragment, TAG_MAFRAGMENT).commit();
-         }
-        return maFragment;
-    }
 
     @Override
     public void onListFragmentInteraction(Device device) {
-        FragmentTransaction fragmentTransaction  = getSupportFragmentManager().beginTransaction();
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         DeviceDetailFragment deviceDetailFragment = DeviceDetailFragment.newInstance(device);
         fragmentTransaction.replace(R.id.nav_conteiner, deviceDetailFragment);
         fragmentTransaction.addToBackStack("device");
@@ -175,36 +164,36 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onListFragmentInteractionQRScanner(Device device) {
-        FragmentTransaction fragmentTransaction  = getSupportFragmentManager().beginTransaction();
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         DeviceDetailFragment deviceDetailFragment = DeviceDetailFragment.newInstance(device);
         fragmentTransaction.replace(R.id.nav_conteiner, deviceDetailFragment);
         fragmentTransaction.addToBackStack("device");
         fragmentTransaction.commit();
-        }
+    }
 
     @Override
     public void onListFragmentInteractionSync(Device device) {
 
-            }
+    }
 
     @Override
     public void onFragmentInteraction(Uri uri) {
 
     }
 
-        @Override
-        public void saveUrlHost(String  text) {
-            Log.d(Const.TAG_LOG, "saveUrlHost run: "+text);
-            sharedPreferences  =  getPreferences(MODE_PRIVATE);
-            SharedPreferences.Editor spEdit =  sharedPreferences.edit();
-            spEdit.putString("URL", text);
-            spEdit.commit();
-        }
-
-
-    public String loadUrlHost(){
+    @Override
+    public void saveUrlHost(String text) {
+        Log.d(Const.TAG_LOG, "saveUrlHost run: " + text);
         sharedPreferences = getPreferences(MODE_PRIVATE);
-        Const.url_host = sharedPreferences.getString("URL","");
+        SharedPreferences.Editor spEdit = sharedPreferences.edit();
+        spEdit.putString("URL", text);
+        spEdit.commit();
+    }
+
+
+    public String loadUrlHost() {
+        sharedPreferences = getPreferences(MODE_PRIVATE);
+        Const.url_host = sharedPreferences.getString("URL", "");
         Const.concatUrl(Const.url_host);
         return Const.url_host;
     }
@@ -256,9 +245,7 @@ public class MainActivity extends AppCompatActivity
         // 6) check statusSync if need to do sync, check the dateUpdate
 
 
-
-
     }
 
 
-        }
+}

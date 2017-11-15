@@ -2,8 +2,10 @@ package com.example.valerapelenskyi.glinvent.fragments;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.Uri;
 import android.opengl.ETC1;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -62,8 +64,11 @@ public class ManageFragment extends Fragment implements View.OnClickListener {
     private List<Device> devicesFromMySQL;
     private TextView tvRowInMYSQL;
     private TextView tvRowInSQLite;
+    private TextView tvRowSYNC;
+    private TextView tvInfotmDelete;
     private EditText etURL;
     private Button btnInsertToSQLite;
+    private Button btnDeletSQLite;
     private Button btnSave;
 
     public ManageFragment() {
@@ -89,21 +94,16 @@ public class ManageFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+
+        // get ALL Items from MYSQL
         mySQLConnect = MySQLConnect.getInstance(getContext());
         devicesFromMySQL = getAllItemsFromMySQL();
-        if (devicesFromMySQL != null) {
-            Log.d(TAG, "onCreate: devicesFromMySQL =" + devicesFromMySQL.size());
-        } else {
-            Log.d(TAG, "onCreate: devicesFromMySQL NULL");
-        }
 
+        // get ALL Items from SQLite
         sqLiteConnect = SQLiteConnect.getInstance(getContext());
         devicesFromSQLite = sqLiteConnect.getAllItemsFromSQLite();
-        if (devicesFromMySQL != null) {
-            Log.d(TAG, "onCreate: devicesFromSQLite =" + devicesFromSQLite.size());
-        } else {
-            Log.d(TAG, "onCreate: devicesFromSQLite NULL");
-        }
+
 
     }
 
@@ -112,25 +112,31 @@ public class ManageFragment extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_manage, container, false);
+        tvInfotmDelete = view.findViewById(R.id.tvInfotmDelete);
+        tvRowInMYSQL = view.findViewById(R.id.tvRowInMYSQL);
+        tvRowInSQLite = view.findViewById(R.id.tvRowInSQLite);
+        tvRowSYNC = view.findViewById(R.id.tvRowSYNC);
+
         etURL = view.findViewById(R.id.etURL);
         etURL.setText(Const.url_host);
 
-        tvRowInSQLite = view.findViewById(R.id.tvRowInSQLite);
-        tvRowInSQLite.setText(String.valueOf(devicesFromSQLite.size()));
-
-        tvRowInMYSQL = view.findViewById(R.id.tvRowInMYSQL);
-        if (getAllItemsFromMySQL() != null) {
-            tvRowInMYSQL.setText(String.valueOf(devicesFromMySQL.size()));
-        }
         btnInsertToSQLite = view.findViewById(R.id.btnIsertTOSQLite);
         btnInsertToSQLite.setOnClickListener(this);
 
         btnSave = view.findViewById(R.id.btnSave);
         btnSave.setOnClickListener(this);
 
+        btnDeletSQLite = view.findViewById(R.id.btnDeleteSQLite);
+        btnDeletSQLite.setOnClickListener(this);
+
+        showCountRowSYNC();
+        showCountRowInSQLite();
+        showCountRowInMYSQL();
         return view;
+    }
 
-
+    private void showCountRowSYNC() {
+        tvRowSYNC.setText(String.valueOf(sqLiteConnect.getNoSyncItemsFromSQLite().size()));
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -168,20 +174,27 @@ public class ManageFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         //  copyDataFromMySQLtoSQLite();
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.btnIsertTOSQLite:
                 if (devicesFromMySQL != null) {
                     SQLiteConnect.getInstance(getContext().getApplicationContext()).insertAllItemToSQList(devicesFromMySQL);
-                    tvRowInSQLite.setText(String.valueOf(devicesFromMySQL.size()));
+                    if (devicesFromSQLite.isEmpty()) {
+                        devicesFromSQLite = SQLiteConnect.getInstance(getContext().getApplicationContext()).getAllItemsFromSQLite();
+                    }
+                    showCountRowInSQLite();
                 }
-            break;
+                break;
             case R.id.btnSave:
                 saveUrlHost(etURL.getText().toString());
                 break;
 
+            case R.id.btnDeleteSQLite:
+                deleteAllFromSQLite();
+                tvRowInSQLite.setText(String.valueOf(devicesFromSQLite.size()));
+                break;
+
         }
     }
-
 
     /**
      * This interface must be implemented by activities that contain this
@@ -198,8 +211,6 @@ public class ManageFragment extends Fragment implements View.OnClickListener {
         void onFragmentInteraction(Uri uri);
         void saveUrlHost(String text);
     }
-
-
     //===================================================
 
     private List<Device> getAllItemsFromMySQL() {
@@ -210,16 +221,25 @@ public class ManageFragment extends Fragment implements View.OnClickListener {
                     public void onResponse(JSONObject response) {
                         //  Log.d(Const.TAG_LOG, response.toString());
                         devicesFromMySQL = getArrayDevices(response);
+
                         if (devicesFromMySQL != null) {
                             tvRowInMYSQL.setText(String.valueOf(devicesFromMySQL.size()));
+                            Log.d(TAG, " result:  From MySQL =" + devicesFromMySQL.size());
+                        } else {
+                            Log.d(TAG, "result:   From MySQL NULL");
                         }
+
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        tvRowInMYSQL.setText("URL unavaible. check URL or Internet connect ");
-                        Toast.makeText(getContext(), "COPY DATA BASE from MYSQL to SQLite", Toast.LENGTH_SHORT).show();
+                        tvRowInMYSQL.setTextColor(Color.RED);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                            tvRowInMYSQL.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                        }
+                        tvRowInMYSQL.setText("URL is unavaible. \n Check URL or Internet connection ");
+                        Toast.makeText(getContext(), "getAllItemsFromMySQL", Toast.LENGTH_SHORT).show();
                     }
                 }
         );
@@ -227,6 +247,21 @@ public class ManageFragment extends Fragment implements View.OnClickListener {
         return devicesFromMySQL;
     }
 
+    private void deleteAllFromSQLite() {
+        if (SQLiteConnect.getInstance(getContext()).getNoSyncItemsFromSQLite().isEmpty()) {
+            int result = SQLiteConnect.getInstance(getContext()).deleteALL();
+            Toast.makeText(getContext(), result + " rows was deleted", Toast.LENGTH_LONG).show();
+            devicesFromSQLite.clear();
+            showCountRowInSQLite();
+            Log.d(TAG, "deleteAllFromSQLite: result " + result);
+        } else {
+            tvInfotmDelete.setTextColor(Color.RED);
+            Toast.makeText(getContext(), "SYNC LIST in NOT EMPTY", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+    // ============================= HELPER METHOD =================================================
     private ArrayList<Device> getArrayDevices(JSONObject response) {
         ArrayList<Device> devices = new ArrayList<Device>();
         try {
@@ -246,38 +281,53 @@ public class ManageFragment extends Fragment implements View.OnClickListener {
                             JO.getString("description")
                     ));
                 }
-                Log.d(TAG, "getArrayDevices: count row = " + products.length());
+                //  Log.d(TAG, "getArrayDevices: count row = " + products.length());
             }
         } catch (JSONException e) {
             e.printStackTrace();
-            Toast.makeText(getContext(),"ERROR "+ e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "ERROR " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
         return devices;
     }
 
-
-    private JsonObjectRequest copyDataFromMySQLtoSQLite() {
-        Log.d(Const.TAG_LOG, "run copyDataFromMySQLtoSQLite");
-
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, Const.server_url,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        devicesFromMySQL = getArrayDevices(response);
-                        if (devicesFromMySQL != null) {
-                            SQLiteConnect.getInstance(getContext().getApplicationContext()).insertAllItemToSQList(devicesFromMySQL);
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                    }
-                }
-        );
-
-        MySQLConnect.getInstance(getActivity().getApplicationContext()).addToRequestque(jsonObjectRequest);
-        return jsonObjectRequest;
+    private void showCountRowInSQLite() {
+        if (devicesFromSQLite.isEmpty()) {
+            tvRowInSQLite.setText(String.valueOf(devicesFromSQLite.size()));
+            btnInsertToSQLite.setVisibility(View.VISIBLE);
+        } else {
+            tvRowInSQLite.setText(String.valueOf(devicesFromSQLite.size()));
+            btnInsertToSQLite.setVisibility(View.INVISIBLE);
+        }
     }
+
+    private void showCountRowInMYSQL() {
+        if (getAllItemsFromMySQL() != null) {
+            tvRowInMYSQL.setText(String.valueOf(devicesFromMySQL.size()));
+        }
+    }
+//
+//    private JsonObjectRequest copyDataFromMySQLtoSQLite() {
+//        Log.d(Const.TAG_LOG, "run copyDataFromMySQLtoSQLite");
+//
+//        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, Const.server_url,
+//                new Response.Listener<JSONObject>() {
+//                    @Override
+//                    public void onResponse(JSONObject response) {
+//                        devicesFromMySQL = getArrayDevices(response);
+//                        if (devicesFromMySQL != null) {
+//                            SQLiteConnect.getInstance(getContext().getApplicationContext()).insertAllItemToSQList(devicesFromMySQL);
+//                        }
+//                    }
+//                },
+//                new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//                    }
+//                }
+//        );
+//
+//        MySQLConnect.getInstance(getActivity().getApplicationContext()).addToRequestque(jsonObjectRequest);
+//        return jsonObjectRequest;
+//    }
 
 }
