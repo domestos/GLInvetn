@@ -152,7 +152,7 @@ public class SQLiteConnect {
         String[] whereArgs = new String[]{String.valueOf(id)};
         ContentValues contentValues = new ContentValues();
         contentValues.put(DBHelper.KEY_STATUS_SYNC, statusSync);
-        contentValues.put(DBHelper.KEY_STATUS_INVENT, "ok");
+        contentValues.put(DBHelper.KEY_STATUS_INVENT, Const.STATUS_FINED);
         sqLiteDatabase.update(DBHelper.TABLE_NAME, contentValues, DBHelper.KEY_ID+" = ? ",whereArgs);
 
     }

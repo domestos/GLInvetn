@@ -168,7 +168,7 @@ public class QRScannerFragment extends Fragment implements View.OnClickListener 
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (data == null) {
+        if (data != null) {
             etNumber.setText(data.getStringExtra("SCAN_RESULT"));
             Log.d(TAG, "onActivityResult: Fragment  requestCode =" + requestCode + " resulte " + data.getStringExtra("SCAN_RESULT"));
             findNumber();

@@ -224,20 +224,22 @@ public class CheckFragment extends Fragment implements View.OnClickListener {
             tvOwner.setText(device.getOwner());
             tvLocation.setText(device.getLocation());
 
-            if(!device.getStatusInvent().isEmpty()){
+            if(device.getStatusInvent().equals(Const.STATUS_FINED)){
+                Log.d(TAG, "btnSetChecked is: INVISIBLE");
                 btnSetChecked.setVisibility(View.INVISIBLE);
             }else {
+                Log.d(TAG, "btnSetChecked is: VISIBLE");
                 btnSetChecked.setVisibility(View.VISIBLE);
             }
 
-            if(device.getStatusInvent().equals("ok")){
+            if(device.getStatusInvent().equals(Const.STATUS_FINED)){
                 tvSQLite.setTextColor(Color.GREEN);
             }
-            if(device.getStatusSync() == STATUS_SYNC_ONLINE && device.getStatusInvent().equals("ok") ){
+            if(device.getStatusSync() == STATUS_SYNC_ONLINE && device.getStatusInvent().equals(Const.STATUS_FINED) ){
                 tvMySQL.setTextColor(Color.GREEN);
             }
 
-            if(device.getStatusSync() == STATUS_SYNC_OFFLINE && device.getStatusInvent().equals("ok") ){
+            if(device.getStatusSync() == STATUS_SYNC_OFFLINE && device.getStatusInvent().equals(Const.STATUS_FINED) ){
                 tvMySQL.setTextColor(Color.RED);
             }
         }else {
@@ -248,10 +250,10 @@ public class CheckFragment extends Fragment implements View.OnClickListener {
     }
 
 
-    private void updateItem(final Device device1) {
+    private void updateItem(final Device device) {
         Log.d(TAG, "updateItem: ");
         if(device != null) {
-            StringRequest  stringRequest = new StringRequest (Request.Method.POST, Const.update_status_invent_url,
+            StringRequest  stringRequest = new StringRequest (Request.Method.POST, Const.update_item,
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
@@ -279,7 +281,8 @@ public class CheckFragment extends Fragment implements View.OnClickListener {
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String> params  = new HashMap<String, String>();
                     Log.d(TAG, "getParams: id = "+device.getId());
-                    params.put("status_invent", "ok");
+                    params.put("method", "method_fined");
+                    params.put("status_invent", Const.STATUS_FINED);
                     return params;
                 }
             };

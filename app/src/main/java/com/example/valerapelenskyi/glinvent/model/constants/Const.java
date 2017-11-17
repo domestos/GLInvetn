@@ -32,6 +32,7 @@ public class Const extends Application {
     public static String  TAG_LOG = "TAG_LOG";
     public static final int STATUS_SYNC_ONLINE = 0;
     public static final int STATUS_SYNC_OFFLINE = 1;
+    public static final String STATUS_FINED= "ok";
     private String urlHost;
 
 
