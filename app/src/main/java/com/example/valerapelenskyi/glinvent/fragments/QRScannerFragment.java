@@ -38,6 +38,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import at.markushi.ui.CircleButton;
+
 import static android.content.ContentValues.TAG;
 
 /**
@@ -54,7 +56,7 @@ public class QRScannerFragment extends Fragment implements View.OnClickListener 
     private SyncListRecyclerViewAdapter syncAdapter;
     private EditText etNumber;
     private Button btnSearch;
-    private Button btnScan;
+    private CircleButton btnScan;
     private int mColumnCount = 1;
     private OnListFragmentInteractionListenerQRScanner mListener;
     private Button btnSyncAll;

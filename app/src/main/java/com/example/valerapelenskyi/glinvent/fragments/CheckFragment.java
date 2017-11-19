@@ -33,6 +33,8 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import at.markushi.ui.CircleButton;
+
 import static android.content.ContentValues.TAG;
 
 /**
@@ -45,7 +47,8 @@ import static android.content.ContentValues.TAG;
  */
 public class CheckFragment extends Fragment implements View.OnClickListener {
     private  Device device;
-    private Button btnScan;
+    private CircleButton btnScan;
+
     private Button btnSetChecked;
     private Button btnSearch;
     private TextView tvNumber;
