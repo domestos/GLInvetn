@@ -156,7 +156,7 @@ public class SyncListFragment extends Fragment {
         devices = getAllItemFromSQLite();
         if(devices == null){
             //якщо в SQLite немає записів то скопіювати їх
-            copyDataFromMySQLtoSQLite();
+            //copyDataFromMySQLtoSQLite();
         }
     }
 
@@ -164,13 +164,13 @@ public class SyncListFragment extends Fragment {
         Log.d(Const.TAG_LOG, "run getAllItemFromSQLite ");
         devices = SQLiteConnect.getInstance(getContext()).getAllItemsFromSQLite();
 
-        if(devices.size() <=0){
-            //getContext().tvResponse.setText("SQLite база пуста. Скопіювати базу з MYSQL ?");
-            Toast.makeText(getContext(), "SQLite => Tabele isEmpty", Toast.LENGTH_SHORT).show();
-          //  return null;
-            copyDataFromMySQLtoSQLite();
-
-        }
+//        if(devices.size() <=0){
+//            //getContext().tvResponse.setText("SQLite база пуста. Скопіювати базу з MYSQL ?");
+//            Toast.makeText(getContext(), "SQLite => Tabele isEmpty", Toast.LENGTH_SHORT).show();
+//          //  return null;
+//            copyDataFromMySQLtoSQLite();
+//
+//        }
         return devices;
     }
 
@@ -187,69 +187,69 @@ public class SyncListFragment extends Fragment {
         }
         return devices;
     }
-
-    private JsonObjectRequest copyDataFromMySQLtoSQLite() {
-        Log.d(Const.TAG_LOG, "run copyDataFromMySQLtoSQLite");
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,Const.server_url,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        devices = getArrayDevices(response);
-                        try {
-
-                            SQLiteConnect.getInstance(getContext()).insertAllItemToSQList(devices);
-                        }catch (RuntimeException e){
-                            Log.e(Const.TAG_LOG, "catch " + e.getMessage());
-                        }
-
-                    }
-
-
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getContext(), "COPY DATA BASE from MYSQL to SQLite", Toast.LENGTH_SHORT).show();
-                    }
-                }
-        );
-
-        MySQLConnect.getInstance(getContext().getApplicationContext()).addToRequestque(jsonObjectRequest);
-        return jsonObjectRequest;
-    }
-
-    private ArrayList<Device> getArrayDevices(JSONObject response) {
-        ArrayList<Device> devices = new ArrayList<Device>();
-        try {
-            if(response.get("success").equals(1)){
-                JSONArray products = (JSONArray) response.get("products");
-                for (int i=0; i < products.length(); i++){
-                    JSONObject JO = (JSONObject) products.get(i);
-                    devices.add(new Device(
-                            JO.getInt("id"),
-                            JO.getString("number"),
-                            JO.getString("item"),
-                            JO.getString("name_wks"),
-                            JO.getString("owner"),
-                            JO.getString("location"),
-                            JO.getString("status_invent"),
-                            JO.getInt("status_sync"),
-                            JO.getString("description")
-                    ))  ;
-                }
-
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-
-        }
-        return devices;
-    }
+//
+//    private JsonObjectRequest copyDataFromMySQLtoSQLite() {
+//        Log.d(Const.TAG_LOG, "run copyDataFromMySQLtoSQLite");
+//        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,Const.server_url,
+//                new Response.Listener<JSONObject>() {
+//                    @Override
+//                    public void onResponse(JSONObject response) {
+//                        devices = getArrayDevices(response);
+//                        try {
+//
+//                            SQLiteConnect.getInstance(getContext()).insertAllItemToSQList(devices);
+//                        }catch (RuntimeException e){
+//                            Log.e(Const.TAG_LOG, "catch " + e.getMessage());
+//                        }
+//
+//                    }
+//
+//
+//                },
+//                new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//                        Toast.makeText(getContext(), "COPY DATA BASE from MYSQL to SQLite", Toast.LENGTH_SHORT).show();
+//                    }
+//                }
+//        );
+//
+//        MySQLConnect.getInstance(getContext().getApplicationContext()).addToRequestque(jsonObjectRequest);
+//        return jsonObjectRequest;
+//    }
+//
+//    private ArrayList<Device> getArrayDevices(JSONObject response) {
+//        ArrayList<Device> devices = new ArrayList<Device>();
+//        try {
+//            if(response.get("success").equals(1)){
+//                JSONArray products = (JSONArray) response.get("products");
+//                for (int i=0; i < products.length(); i++){
+//                    JSONObject JO = (JSONObject) products.get(i);
+//                    devices.add(new Device(
+//                            JO.getInt("id"),
+//                            JO.getString("number"),
+//                            JO.getString("item"),
+//                            JO.getString("name_wks"),
+//                            JO.getString("owner"),
+//                            JO.getString("location"),
+//                            JO.getString("status_invent"),
+//                            JO.getInt("status_sync"),
+//                            JO.getString("description")
+//                    ))  ;
+//                }
+//
+//            }
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+//
+//        }
+//        return devices;
+//    }
 
     private void syncAll(List<Device> noSyncItems, RecyclerView.Adapter adapter) {
         for (int i=0; noSyncItems.size()>i; i++){
-        updateItem(noSyncItems.get(i), adapter);
+            updateItem(noSyncItems.get(i), adapter);
         }
     }
 
@@ -280,10 +280,19 @@ public class SyncListFragment extends Fragment {
                 @Override
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String> params  = new HashMap<String, String>();
+                    Log.d(TAG, "syncAll: ID)"+String.valueOf(device.getId()));
                     params.put("id", String.valueOf(device.getId()));
+
+                    Log.d(TAG, "syncAll: Status Invent "+device.getStatusInvent());
                     params.put("status_invent",device.getStatusInvent());
+
+                    Log.d(TAG, "syncAll: Owner "+device.getOwner());
                     params.put("owner", device.getOwner());
+
+                    Log.d(TAG, "syncAll: Location "+device.getLocation());
                     params.put("location", device.getLocation());
+
+                    Log.d(TAG, "syncAll: Description "+device.getDescription());
                     params.put("description", device.getDescription());
                     return params;
                 }

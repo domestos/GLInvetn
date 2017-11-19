@@ -219,6 +219,7 @@ public class CheckFragment extends Fragment implements View.OnClickListener {
         device = SQLiteConnect.getInstance(getContext()).getItemFromSQLite(etNumber.getText().toString());
         if(device !=null) {
             linearLayout.setVisibility(View.VISIBLE);
+
             tvNumber.setText(device.getNumber());
             tvItem.setText(device.getItem());
             tvOwner.setText(device.getOwner());
@@ -253,7 +254,7 @@ public class CheckFragment extends Fragment implements View.OnClickListener {
     private void updateItem(final Device device) {
         Log.d(TAG, "updateItem: ");
         if(device != null) {
-            StringRequest  stringRequest = new StringRequest (Request.Method.POST, Const.update_item,
+            StringRequest  stringRequest = new StringRequest (Request.Method.POST, Const.update_status_invent_url,
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
@@ -262,15 +263,17 @@ public class CheckFragment extends Fragment implements View.OnClickListener {
                             if(responseSuccess !=0){
                                 // inset to SQLite SATATUS_ONLINE
                                 SQLiteConnect.getInstance(getContext()).updateStatusInvent(device.getId(),STATUS_SYNC_ONLINE);
+                                tvMySQL.setTextColor(Color.GREEN);
+                                tvSQLite.setTextColor(Color.GREEN);
+                                Toast.makeText(getActivity(),"MYSQL and SQLite are Success ",Toast.LENGTH_LONG).show();
                             }
-                            tvMySQL.setTextColor(Color.GREEN);
-                            tvSQLite.setTextColor(Color.GREEN);
+
                         }
                     },
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            Toast.makeText(getActivity(),"ERROR "+error.getMessage(),Toast.LENGTH_LONG).show();
+                            Toast.makeText(getActivity(),"MYSQL insert ERROR "+error.getMessage(),Toast.LENGTH_LONG).show();
                             SQLiteConnect.getInstance(getContext()).updateStatusInvent(device.getId(),STATUS_SYNC_OFFLINE);
                             tvMySQL.setTextColor(Color.RED);
                             tvSQLite.setTextColor(Color.GREEN);
@@ -281,6 +284,7 @@ public class CheckFragment extends Fragment implements View.OnClickListener {
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String> params  = new HashMap<String, String>();
                     Log.d(TAG, "getParams: id = "+device.getId());
+                    params.put("id", String.valueOf(device.getId()));
                     params.put("method", "method_fined");
                     params.put("status_invent", Const.STATUS_FINED);
                     return params;

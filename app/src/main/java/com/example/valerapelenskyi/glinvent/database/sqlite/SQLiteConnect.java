@@ -68,11 +68,11 @@ public class SQLiteConnect {
                     sqLiteStatement.clearBindings();
 
                     sqLiteStatement.bindLong(1, devices.get(i).getId());
-                    sqLiteStatement.bindString(2, devices.get(i).getNumber());
+                    sqLiteStatement.bindString(2, devices.get(i).getNumber().trim());
                     sqLiteStatement.bindString(3, devices.get(i).getItem());
-                    sqLiteStatement.bindString(4, devices.get(i).getName_wks());
-                    sqLiteStatement.bindString(5, devices.get(i).getOwner());
-                    sqLiteStatement.bindString(6, devices.get(i).getLocation());
+                    sqLiteStatement.bindString(4, devices.get(i).getName_wks().trim());
+                    sqLiteStatement.bindString(5, devices.get(i).getOwner().trim());
+                    sqLiteStatement.bindString(6, devices.get(i).getLocation().trim());
                     sqLiteStatement.bindString(7, devices.get(i).getStatusInvent() );
                     sqLiteStatement.bindLong(8,   Const.STATUS_SYNC_ONLINE );
                     sqLiteStatement.bindString(9, devices.get(i).getDescription());
