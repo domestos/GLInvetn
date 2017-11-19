@@ -2,17 +2,26 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/nav_qrScanner"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="QR Scanner " />
-        <item
-            android:id="@+id/nav_inventorization"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Inventorization" />
+        <item android:title="Edit info">
+            <menu>
+                <item
+                    android:id="@+id/nav_qrScanner"
+                    android:icon="@drawable/ic_menu_camera"
+                    android:title="QR Scanner " />
+            </menu>
+        </item>
+        <item android:title="Check device">
+            <menu>
+                <item
+                    android:id="@+id/nav_inventorization"
+                    android:icon="?android:attr/actionModeFindDrawable"
+                    android:title="Inventorization" />
+            </menu>
+        </item>
         <item
             android:id="@+id/nav_need_to_sync"
-            android:icon="@drawable/ic_menu_slideshow"
+            android:icon="@android:drawable/stat_notify_sync"
+
             android:title="Need to Sync" />
         <item
             android:id="@+id/nav_manage"
@@ -20,6 +29,7 @@
             android:title="Tools" />
     </group>
 
+    <!--
     <item android:title="Communicate">
         <menu>
             <item
@@ -32,5 +42,5 @@
                 android:title="Send" />
         </menu>
     </item>
-
+-->
 </menu>

@@ -136,11 +136,13 @@ public class MainActivity extends AppCompatActivity
             fragmentTransaction.replace(R.id.nav_conteiner, syncListFragment);
         } else if (id == R.id.nav_manage) {
             fragmentTransaction.replace(R.id.nav_conteiner, manageFragment);
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
         }
+
+//        else if (id == R.id.nav_share) {
+//
+//        } else if (id == R.id.nav_send) {
+//
+//        }
 
         fragmentTransaction.addToBackStack("device");
         fragmentTransaction.commit();
