@@ -2,6 +2,7 @@ package com.example.valerapelenskyi.glinvent.fragments;
 
 
 import android.graphics.Color;
+import android.icu.util.ValueIterator;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -12,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,7 +45,8 @@ public class DeviceDetailFragment extends Fragment implements View.OnClickListen
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private String[] arrayLocation = {"", "QA Red", "Administration", "BB", "Meeting Room", "QA Black", "QA Green", "QA White", "SMU", "Server Room", "Test room", "Training Room", "WAA", "Warehouse"};
-    private  TextView tvNumber;
+    private TextView tvNumber;
+    private ProgressBar progressBar;
     private TextView tvItem;
     private EditText edOwner;
     private EditText edDescription;
@@ -88,20 +91,22 @@ public class DeviceDetailFragment extends Fragment implements View.OnClickListen
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_detail_device, container, false);
-       tvNumber = view.findViewById(R.id.tvNumber);
-         tvItem = view.findViewById(R.id.tvItem);
-         edOwner = view.findViewById(R.id.edOwner);
+        progressBar = view.findViewById(R.id.progressBar);
+
+        tvNumber = view.findViewById(R.id.tvNumber);
+        tvItem = view.findViewById(R.id.tvItem);
+        edOwner = view.findViewById(R.id.edOwner);
         //EditText edLocation = view.findViewById(R.id.edLocation);
-         edDescription = view.findViewById(R.id.edDescription);
-         spLocation = (Spinner) view.findViewById(R.id.spLocation);
-         btnSave = (Button) view.findViewById(R.id.btnSave);
+        edDescription = view.findViewById(R.id.edDescription);
+        spLocation = (Spinner) view.findViewById(R.id.spLocation);
+        btnSave = (Button) view.findViewById(R.id.btnSave);
 
 
         btnSave.setOnClickListener(this);
         tvNumber.setText(mDevice.getNumber());
         tvItem.setText(mDevice.getItem());
         edOwner.setText(mDevice.getOwner());
-       // edLocation.setText(mDevice.getLocation());
+        // edLocation.setText(mDevice.getLocation());
         edDescription.setText(mDevice.getDescription());
 
 
@@ -115,7 +120,7 @@ public class DeviceDetailFragment extends Fragment implements View.OnClickListen
 
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(getContext(), adapterView.getSelectedItem().toString(), Toast.LENGTH_LONG).show();
+              //  Toast.makeText(getContext(), adapterView.getSelectedItem().toString(), Toast.LENGTH_LONG).show();
                 mDevice.setLocation(adapterView.getSelectedItem().toString());
             }
 
@@ -125,69 +130,75 @@ public class DeviceDetailFragment extends Fragment implements View.OnClickListen
             }
         });
 
-
-        return  view;
+        showProgress(false);
+        return view;
     }
+
     private void setSelectItem(Spinner spLocation, Device mDevice) {
-            Log.d("TAG_location", "select Item");
-            mDevice.getLocation();
+        Log.d("TAG_location", "select Item");
+        mDevice.getLocation();
 
-            int i = 0;
-            String localtion;
-            String chek;
-            while (arrayLocation.length > i) {
-                localtion = mDevice.getLocation();
-                chek = arrayLocation[i];
+        int i = 0;
+        String localtion;
+        String chek;
+        while (arrayLocation.length > i) {
+            localtion = mDevice.getLocation();
+            chek = arrayLocation[i];
 
-                if (localtion.equals(chek)) {
-                    spLocation.setSelection(i);
-                }
-                Log.d("TAG_location", localtion + " = " + arrayLocation[i]);
-                i++;
+            if (localtion.equals(chek)) {
+                spLocation.setSelection(i);
             }
-
-
+            Log.d("TAG_location", localtion + " = " + arrayLocation[i]);
+            i++;
+        }
     }
 
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.btnSave:
-             mDevice.setOwner(edOwner.getText().toString());
-             mDevice.setDescription(edDescription.getText().toString());
-                Log.d(Const.TAG_LOG, "onClick: location = "+mDevice.getLocation()+" owner = "+mDevice.getOwner());
-             editItem(mDevice);
-            break;
-
+                mDevice.setOwner(edOwner.getText().toString());
+                mDevice.setDescription(edDescription.getText().toString());
+                Log.d(Const.TAG_LOG, "onClick: location = " + mDevice.getLocation() + " owner = " + mDevice.getOwner());
+                editItem(mDevice);
+                break;
         }
     }
 
+    public void showProgress(boolean show) {
+        btnSave.setEnabled(!show);
+        progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
+
     private void editItem(final Device mDevice) {
-        if(mDevice != null) {
-            StringRequest stringRequest = new StringRequest (Request.Method.POST, Const.update_item,
+        if (mDevice != null) {
+            showProgress(true);
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, Const.update_item,
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
-                            Toast.makeText(getActivity(),response.toString(),Toast.LENGTH_LONG).show();
+                            Toast.makeText(getActivity(), response.toString(), Toast.LENGTH_LONG).show();
                             int responseSuccess = getSuccess(response);
-                            if(responseSuccess !=0){
+                            if (responseSuccess != 0) {
                                 // inset to SQLite SATATUS_ONLINE
-                                SQLiteConnect.getInstance(getContext()).updateItem(mDevice,Const.STATUS_SYNC_ONLINE);
+                                SQLiteConnect.getInstance(getContext()).updateItem(mDevice, Const.STATUS_SYNC_ONLINE);
                             }
+                            showProgress(false);
                         }
                     },
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            Toast.makeText(getActivity(),"ERROR "+error.getMessage(),Toast.LENGTH_LONG).show();
-                            SQLiteConnect.getInstance(getContext()).updateItem(mDevice,Const.STATUS_SYNC_OFFLINE);
+                            Toast.makeText(getActivity(), "MYSQL ERROR " + error.getMessage(), Toast.LENGTH_LONG).show();
+                            SQLiteConnect.getInstance(getContext()).updateItem(mDevice, Const.STATUS_SYNC_OFFLINE);
+                            showProgress(false);
                         }
                     }
-            ){
+            ) {
                 @Override
                 protected Map<String, String> getParams() throws AuthFailureError {
-                    Map<String, String> params  = new HashMap<String, String>();
+                    Map<String, String> params = new HashMap<String, String>();
                     params.put("id", String.valueOf(mDevice.getId()));
                     params.put("owner", mDevice.getOwner());
                     params.put("location", mDevice.getLocation());
@@ -202,8 +213,6 @@ public class DeviceDetailFragment extends Fragment implements View.OnClickListen
     }
 
 
-
-
     private void updateItem(final Device device1) {
 
     }
@@ -212,8 +221,8 @@ public class DeviceDetailFragment extends Fragment implements View.OnClickListen
         JSONObject jsonObject = null;
         try {
             jsonObject = new JSONObject(response);
-            Log.d(Const.TAG_LOG, "getSuccess: "+ jsonObject.get("success") );
-            return (Integer) jsonObject.get("success") ;
+            Log.d(Const.TAG_LOG, "getSuccess: " + jsonObject.get("success"));
+            return (Integer) jsonObject.get("success");
 
         } catch (JSONException e) {
             e.printStackTrace();

@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,7 +49,7 @@ import static android.content.ContentValues.TAG;
 public class CheckFragment extends Fragment implements View.OnClickListener {
     private  Device device;
     private CircleButton btnScan;
-
+    private ProgressBar progressBar;
     private Button btnSetChecked;
     private Button btnSearch;
     private TextView tvNumber;
@@ -100,7 +101,6 @@ public class CheckFragment extends Fragment implements View.OnClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -116,6 +116,7 @@ public class CheckFragment extends Fragment implements View.OnClickListener {
         linearLayout = view.findViewById(R.id.id_fined_details);
         linearLayout.setVisibility(View.INVISIBLE);
 
+        progressBar = view.findViewById(R.id.progressBar);
         tvNumber = view.findViewById(R.id.tvNumber);
         etNumber = view.findViewById(R.id.etNumber);
         tvOwner = view.findViewById(R.id.tvOwner);
@@ -213,6 +214,7 @@ public class CheckFragment extends Fragment implements View.OnClickListener {
     }
 
     private void findNumber() {
+        showProgress(true);
         device = null;
         tvSQLite.setTextColor(Color.BLACK);
         tvMySQL.setTextColor(Color.BLACK);
@@ -250,13 +252,15 @@ public class CheckFragment extends Fragment implements View.OnClickListener {
             linearLayout.setVisibility(View.INVISIBLE);
             Toast.makeText(getActivity(), "NOT FOUND. Result null", Toast.LENGTH_LONG).show();
         }
-
+        showProgress(false);
     }
 
 
     private void updateItem(final Device device) {
         Log.d(TAG, "updateItem: ");
+
         if(device != null) {
+            showProgress(true);
             StringRequest  stringRequest = new StringRequest (Request.Method.POST, Const.update_status_invent_url,
                     new Response.Listener<String>() {
                         @Override
@@ -269,6 +273,7 @@ public class CheckFragment extends Fragment implements View.OnClickListener {
                                 tvMySQL.setTextColor(Color.GREEN);
                                 tvSQLite.setTextColor(Color.GREEN);
                                 Toast.makeText(getActivity(),"MYSQL and SQLite are Success ",Toast.LENGTH_LONG).show();
+                                showProgress(false);
                             }
 
                         }
@@ -280,6 +285,7 @@ public class CheckFragment extends Fragment implements View.OnClickListener {
                             SQLiteConnect.getInstance(getContext()).updateStatusInvent(device.getId(),STATUS_SYNC_OFFLINE);
                             tvMySQL.setTextColor(Color.RED);
                             tvSQLite.setTextColor(Color.GREEN);
+                            showProgress(false);
                         }
                     }
             ){
@@ -317,6 +323,12 @@ public class CheckFragment extends Fragment implements View.OnClickListener {
         return SQLiteConnect.getInstance(getContext()).getItemFromSQLite(number);
     }
 
+    public void showProgress(boolean show) {
+          btnSetChecked.setEnabled(!show);
+          btnSearch.setEnabled(!show);
+          btnScan.setVisibility(show ? View.INVISIBLE : View.VISIBLE);
+          progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
 
     public TextView getTvNumber() {
         return tvNumber;

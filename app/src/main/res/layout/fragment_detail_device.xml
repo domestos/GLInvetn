@@ -58,6 +58,11 @@
         android:inputType="textMultiLine"
         tools:text="Descriptions" />
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
     <Button
         android:id="@+id/btnSave"
         android:layout_width="match_parent"
