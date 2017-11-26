@@ -146,98 +146,107 @@ public class QRScannerFragment extends Fragment implements View.OnClickListener 
                 integrator.initiateScan();
                 break;
             case R.id.btnSearch:
-                findNumber();
+                findDevices();
                 break;
 
         }
 
     }
 
-    private void findNumber() {
-        device = SQLiteConnect.getInstance(getContext()).getItemFromSQLite(etNumber.getText().toString());
-        if (device != null) {
-            if (devices == null) {
-                devices = new ArrayList<Device>();
-            }
-            devices.clear();
-            devices.add(device);
+    private void findDevices() {
+        devices = SQLiteConnect.getInstance(getContext()).getDevicesFromSQLite(etNumber.getText().toString());
+        if (devices != null) {
             recyclerView.setAdapter(new QRScannerListRecyclerViewAdapter(devices, mListener));
-
         } else {
             Toast.makeText(getContext(), "No find", Toast.LENGTH_LONG).show();
         }
     }
+//
+//    private void findNumber() {
+//        device = SQLiteConnect.getInstance(getContext()).getItemFromSQLite(etNumber.getText().toString());
+//        if (device != null) {
+//            if (devices == null) {
+//                devices = new ArrayList<Device>();
+//            }
+//            devices.clear();
+//            devices.add(device);
+//            recyclerView.setAdapter(new QRScannerListRecyclerViewAdapter(devices, mListener));
+//
+//        } else {
+//            Toast.makeText(getContext(), "No find", Toast.LENGTH_LONG).show();
+//        }
+//    }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (data != null) {
-            etNumber.setText(data.getStringExtra("SCAN_RESULT"));
-            Log.d(TAG, "onActivityResult: Fragment  requestCode =" + requestCode + " resulte " + data.getStringExtra("SCAN_RESULT"));
-            findNumber();
-        } else {
-            Toast.makeText(getContext(), "Canceled", Toast.LENGTH_SHORT).show();
+        @Override
+        public void onActivityResult ( int requestCode, int resultCode, Intent data){
+            if (data != null) {
+                etNumber.setText(data.getStringExtra("SCAN_RESULT"));
+                Log.d(TAG, "onActivityResult: Fragment  requestCode =" + requestCode + " resulte " + data.getStringExtra("SCAN_RESULT"));
+                findDevices();
+            } else {
+                Toast.makeText(getContext(), "Canceled", Toast.LENGTH_SHORT).show();
+            }
         }
-    }
 
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnListFragmentInteractionListenerQRScanner {
-        // TODO: Update argument type and name
-        void onListFragmentInteractionQRScanner(Device device);
-    }
-
-
-    private List<Device> getNoSyncItems() {
-        Log.d(Const.TAG_LOG, "run getNoSyncItems ");
-        devices = SQLiteConnect.getInstance(getContext()).getNoSyncItemsFromSQLite();
-
-        if (devices == null) {
-            //getContext().tvResponse.setText("SQLite база пуста. Скопіювати базу з MYSQL ?");
-            Toast.makeText(getContext(), "SQLite => Tabele isEmpty", Toast.LENGTH_SHORT).show();
-            //  return null;
-            //     copyDataFromMySQLtoSQLite();
-
+        /**
+         * This interface must be implemented by activities that contain this
+         * fragment to allow an interaction in this fragment to be communicated
+         * to the activity and potentially other fragments contained in that
+         * activity.
+         * <p/>
+         * See the Android Training lesson <a href=
+         * "http://developer.android.com/training/basics/fragments/communicating.html"
+         * >Communicating with Other Fragments</a> for more information.
+         */
+        public interface OnListFragmentInteractionListenerQRScanner {
+            // TODO: Update argument type and name
+            void onListFragmentInteractionQRScanner(Device device);
         }
-        return devices;
-    }
 
-    private ArrayList<Device> getArrayDevices(JSONObject response) {
-        ArrayList<Device> devices = new ArrayList<Device>();
-        try {
-            if (response.get("success").equals(1)) {
-                JSONArray products = (JSONArray) response.get("products");
-                for (int i = 0; i < products.length(); i++) {
-                    JSONObject JO = (JSONObject) products.get(i);
-                    devices.add(new Device(
-                            JO.getInt("id"),
-                            JO.getString("number"),
-                            JO.getString("item"),
-                            JO.getString("name_wks"),
-                            JO.getString("owner"),
-                            JO.getString("location"),
-                            JO.getString("status_invent"),
-                            JO.getInt("status_sync"),
-                            JO.getString("description")
-                    ));
-                }
+
+        private List<Device> getNoSyncItems () {
+            Log.d(Const.TAG_LOG, "run getNoSyncItems ");
+            devices = SQLiteConnect.getInstance(getContext()).getNoSyncItemsFromSQLite();
+
+            if (devices == null) {
+                //getContext().tvResponse.setText("SQLite база пуста. Скопіювати базу з MYSQL ?");
+                Toast.makeText(getContext(), "SQLite => Tabele isEmpty", Toast.LENGTH_SHORT).show();
+                //  return null;
+                //     copyDataFromMySQLtoSQLite();
 
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-
+            return devices;
         }
-        return devices;
-    }
+
+        private ArrayList<Device> getArrayDevices (JSONObject response){
+            ArrayList<Device> devices = new ArrayList<Device>();
+            try {
+                if (response.get("success").equals(1)) {
+                    JSONArray products = (JSONArray) response.get("products");
+                    for (int i = 0; i < products.length(); i++) {
+                        JSONObject JO = (JSONObject) products.get(i);
+                        devices.add(new Device(
+                                JO.getInt("id"),
+                                JO.getString("number"),
+                                JO.getString("item"),
+                                JO.getString("name_wks"),
+                                JO.getString("owner"),
+                                JO.getString("location"),
+                                JO.getString("status_invent"),
+                                JO.getInt("status_sync"),
+                                JO.getString("description")
+                        ));
+                    }
+
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+
+            }
+            return devices;
+        }
 
     private void updateItem(final Device device, final RecyclerView.Adapter adapter) {
         if (device != null) {
