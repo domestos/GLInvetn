@@ -106,7 +106,7 @@
             <TextView
                 android:id="@+id/tvInfotmDelete"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="3"
                 android:text="You can delet SQLite Table only if SYNC  list is EMPTY"
                 android:textAlignment="center"
@@ -115,7 +115,7 @@
             <Button
                 android:id="@+id/btnDeleteSQLite"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:width="1dp"
                 android:text="Delete" />
