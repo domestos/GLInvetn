@@ -1,36 +1,44 @@
 package com.example.valerapelenskyi.glinvent;
 
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.example.valerapelenskyi.glinvent.database.mysql.MySQLConnect;
+import com.example.valerapelenskyi.glinvent.database.sqlite.SQLiteConnect;
 import com.example.valerapelenskyi.glinvent.fragments.CheckFragment;
 import com.example.valerapelenskyi.glinvent.fragments.DeviceDetailFragment;
 import com.example.valerapelenskyi.glinvent.fragments.DevicesListFragment;
 import com.example.valerapelenskyi.glinvent.fragments.ManageFragment;
 import com.example.valerapelenskyi.glinvent.fragments.QRScannerFragment;
+import com.example.valerapelenskyi.glinvent.fragments.QRScannerListRecyclerViewAdapter;
 import com.example.valerapelenskyi.glinvent.fragments.SyncListFragment;
 import com.example.valerapelenskyi.glinvent.model.Device;
 import com.example.valerapelenskyi.glinvent.model.constants.Const;
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class MainActivity extends AppCompatActivity
@@ -66,8 +74,6 @@ public class MainActivity extends AppCompatActivity
         syncListFragment = new SyncListFragment();
         qrScannerFragment = new QRScannerFragment();
 
-
-        prepareApp();
 
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 //        fab.setOnClickListener(new View.OnClickListener() {
@@ -174,6 +180,82 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public boolean setStatusInventory(final Device device, final QRScannerListRecyclerViewAdapter.ViewHolder holder) {
+        showProgres(holder, true);
+        if (device != null) {
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, Const.update_status_invent_url,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            Toast.makeText(MainActivity.this, response.toString(), Toast.LENGTH_LONG).show();
+                            int responseSuccess = getSuccess(response);
+                            if (responseSuccess != 0) {
+                                // inset to SQLite SATATUS_ONLINE
+                                SQLiteConnect.getInstance(MainActivity.this).updateStatusInvent(device.getId(), Const.STATUS_SYNC_ONLINE);
+                                Toast.makeText(MainActivity.this, "MYSQL and SQLite are Success ", Toast.LENGTH_LONG).show();
+
+                                //update view item in list
+                                device.setStatusInvent(Const.STATUS_FINED);
+                                device.setStatusSync(Const.STATUS_SYNC_ONLINE);
+                                holder.checkInventoryStatus(device);
+                            }
+                            showProgres(holder, false);
+
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(MainActivity.this, "MYSQL insert ERROR " + error.getMessage(), Toast.LENGTH_LONG).show();
+                            SQLiteConnect.getInstance(MainActivity.this).updateStatusInvent(device.getId(), Const.STATUS_SYNC_OFFLINE);
+
+                            //update view item in list
+                            device.setStatusInvent(Const.STATUS_FINED);
+                            device.setStatusSync(Const.STATUS_SYNC_OFFLINE);
+                            holder.checkInventoryStatus(device);
+                            showProgres(holder, false);
+
+                        }
+                    }
+            ) {
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<String, String>();
+                    Log.d(Const.TAG_LOG, "getParams: id = " + device.getId());
+                    params.put("id", String.valueOf(device.getId()));
+                    params.put("method", "method_fined");
+                    params.put("status_invent", Const.STATUS_FINED);
+
+                    return params;
+                }
+            };
+
+            MySQLConnect.getInstance(this).addToRequestque(stringRequest);
+        }
+
+        return true;
+    }
+
+    private void showProgres(QRScannerListRecyclerViewAdapter.ViewHolder holder, boolean show) {
+        holder.btnOK.setVisibility(show ? View.INVISIBLE : View.VISIBLE);
+        holder.progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
+
+    }
+
+    private int getSuccess(String response) {
+        JSONObject jsonObject = null;
+        try {
+            jsonObject = new JSONObject(response);
+            Log.d(Const.TAG_LOG, "getSuccess: " + jsonObject.get("success"));
+            return (Integer) jsonObject.get("success");
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    @Override
     public void onListFragmentInteractionSync(Device device) {
 
     }
@@ -198,55 +280,6 @@ public class MainActivity extends AppCompatActivity
         Const.url_host = sharedPreferences.getString("URL", "");
         Const.concatUrl(Const.url_host);
         return Const.url_host;
-    }
-
-// ==================================== preparation of APP =========================================
-// Get the results From QRScan
-// THIS METHOD COMUNICATION WITH CHECKFRAGMENT
-//
-//@Override
-//public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//    IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-//       super.onActivityResult(requestCode,resultCode,data);
-//    if (result != null) {
-//        if (result.getContents() == null) {
-//            Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
-//        } else {
-//            // INSERT RESULT INTO Device of CheckFragment.class
-//            Device device = checkFragment.findDevice(result.getContents());
-//
-//            if(device!=null) {
-//                checkFragment.setDevice(device);
-//
-//                checkFragment.getEtNumber().setText(checkFragment.getDevice().getNumber());
-//                checkFragment.getTvNumber().setText(checkFragment.getDevice().getNumber());
-//                checkFragment.getTvItem().setText(checkFragment.getDevice().getItem());
-//                checkFragment.getTvOwner().setText(checkFragment.getDevice().getOwner());
-//                checkFragment.getTvLocation().setText(checkFragment.getDevice().getLocation());
-//            }else{
-//                Toast.makeText(this, "NO FOUND OR DATA BASE IS EMPTY", Toast.LENGTH_LONG).show();
-//            }
-//
-//         //   etNumber.setText(result.getContents());
-//            // connectToURLFragment.startGetJSON(Const.URL_ADDRESS + "'" + etInventNumber.getText().toString() + "'");
-//
-//           Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
-//        }
-//    } else {
-//        super.onActivityResult(requestCode, resultCode, data);
-//    }
-//}
-
-    private void prepareApp() {
-
-        // 1) need check URL
-        // 2) check avaible URL
-        // 3) get all Items From MYSQL
-        // 4) get all Items From SQLite
-        // 5) compare counts bouth DB
-        // 6) check statusSync if need to do sync, check the dateUpdate
-
-
     }
 
 

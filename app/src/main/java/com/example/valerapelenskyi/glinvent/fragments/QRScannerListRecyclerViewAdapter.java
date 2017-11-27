@@ -1,14 +1,20 @@
 package com.example.valerapelenskyi.glinvent.fragments;
 
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.valerapelenskyi.glinvent.R;
 import com.example.valerapelenskyi.glinvent.fragments.QRScannerFragment.OnListFragmentInteractionListenerQRScanner;
 import com.example.valerapelenskyi.glinvent.model.Device;
+import com.example.valerapelenskyi.glinvent.model.constants.Const;
 
 import java.util.List;
 
@@ -36,14 +42,22 @@ public class QRScannerListRecyclerViewAdapter extends RecyclerView.Adapter<QRSca
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         holder.device = devices.get(position);
         holder.item.setText(devices.get(position).getItem());
         holder.number.setText(devices.get(position).getNumber());
         holder.tvOwner.setText(devices.get(position).getOwner());
         holder.tvLocation.setText(devices.get(position).getLocation());
-        //  holder.mIdView.setText(String.valueOf(devices.get(position).getId()));
-        //  holder.description.setText(devices.get(position).getDescription());
+        holder.checkInventoryStatus(devices.get(position));
+        holder.btnOK.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               mListener.setStatusInventory(holder.device, holder);
+
+
+            }
+
+        });
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,6 +70,11 @@ public class QRScannerListRecyclerViewAdapter extends RecyclerView.Adapter<QRSca
             }
         });
     }
+
+
+
+
+
 
     @Override
     public int getItemCount() {
@@ -70,6 +89,10 @@ public class QRScannerListRecyclerViewAdapter extends RecyclerView.Adapter<QRSca
         public final TextView number;
         public final TextView tvOwner;
         public final TextView tvLocation;
+        public final TextView tvMySQL;
+        public final TextView tvSQLite;
+        public final Button btnOK;
+        public final ProgressBar progressBar;
         //        public final TextView description;
         public Device device;
 
@@ -81,12 +104,45 @@ public class QRScannerListRecyclerViewAdapter extends RecyclerView.Adapter<QRSca
             number = (TextView) view.findViewById(R.id.number);
             tvOwner = (TextView) view.findViewById(R.id.tvOwner);
             tvLocation = (TextView) view.findViewById(R.id.tvLocation);
+            tvMySQL = view.findViewById(R.id.tvMySQL);
+            tvSQLite = view.findViewById(R.id.tvSQLite);
+            btnOK = view.findViewById(R.id.btnOK);
+            progressBar = view.findViewById(R.id.pBar);
+
 //            description = (TextView) view.findViewById(R.id.description);
+        }
+
+
+        public void checkInventoryStatus(Device device) {
+            if(device.getStatusInvent().equals(Const.STATUS_FINED)){
+                Log.d(Const.TAG_LOG, "btnSetChecked is: INVISIBLE");
+                btnOK.setVisibility(View.GONE);
+            }else {
+                Log.d(Const.TAG_LOG, "btnSetChecked is: VISIBLE");
+                btnOK.setVisibility(View.VISIBLE);
+            }
+
+            if(device.getStatusInvent().equals(Const.STATUS_FINED)){
+                tvSQLite.setTextColor(Color.GREEN);
+            }
+
+            if(device.getStatusSync() == Const.STATUS_SYNC_ONLINE && device.getStatusInvent().equals(Const.STATUS_FINED) ){
+              tvMySQL.setTextColor(Color.GREEN);
+            }
+
+            if(device.getStatusSync() == Const.STATUS_SYNC_OFFLINE && device.getStatusInvent().equals(Const.STATUS_FINED) ){
+               tvMySQL.setTextColor(Color.RED);
+            }
+
         }
 
         @Override
         public String toString() {
             return super.toString() + " '" + number.getText() + "'";
+        }
+
+        public void updateViewItem() {
+           notifyDataSetChanged();
         }
     }
 }

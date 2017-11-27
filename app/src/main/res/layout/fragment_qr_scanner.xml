@@ -5,7 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:name="com.example.valerapelenskyi.glinvent.fragments.FragmentListDiveces"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
+
     android:gravity="center"
     android:orientation="vertical"
     app:layoutManager="LinearLayoutManager"
@@ -13,7 +14,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingBottom="20dp"
         android:paddingTop="20dp">
@@ -44,19 +45,25 @@
         android:id="@+id/list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+
         android:layout_weight="1"
         tools:listitem="@layout/list_item" />
 
     <LinearLayout
+        android:paddingBottom="20dp"
+        android:paddingLeft="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingTop="70dp">
 
         <at.markushi.ui.CircleButton
+
             android:id="@+id/btnScan"
-            android:layout_width="match_parent"
-            android:layout_height="107dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:adjustViewBounds="true"
+            android:cropToPadding="true"
             android:src="@android:drawable/ic_menu_camera"
             app:cb_color="#4caf9b"
             app:cb_pressedRingWidth="8dip"
