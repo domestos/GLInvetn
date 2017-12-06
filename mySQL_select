@@ -2,12 +2,19 @@ SELECT * FROM `wp_inventory` WHERE `item` LIKE '%monitor%'
 
 
 
-UPDATE `wp_inventory` SET `type`= 'status_invent' 
+UPDATE `wp_inventory` SET `status_invent`= '' 
 
 UPDATE `wp_inventory` SET `type`= 'Monitor' WHERE `item` LIKE '%monitor%'
 UPDATE `wp_inventory` SET `type`= 'Computer' WHERE `item` LIKE '%computer%'
 UPDATE `wp_inventory` SET `type`= 'Apple Mac mini ' WHERE `item` LIKE '%Apple Mac mini%'
+UPDATE `wp_inventory` SET `type`= 'Projector' WHERE `item` LIKE '%Projector%'
+
+UPDATE `wp_inventory` SET `location`= 'QA Red' WHERE `location` LIKE '%QA Red%'
+
 
 SELECT COUNT(type) FROM `wp_inventory` WHERE type LIKE '%computer%' and status_invent !=0
 SELECT COUNT(type) FROM `wp_inventory` WHERE type LIKE '%monitor%' and status_invent !=0
 SELECT COUNT(type) FROM `wp_inventory` WHERE type LIKE '%Apple Mac mini%' and status_invent !=0
+
+
+

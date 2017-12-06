@@ -136,9 +136,10 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_qrScanner) {
             fragmentTransaction.replace(R.id.nav_conteiner, qrScannerFragment);
-        } else if (id == R.id.nav_inventorization) {
+        } /*else if (id == R.id.nav_inventorization) {
             fragmentTransaction.replace(R.id.nav_conteiner, checkFragment);
-        } else if (id == R.id.nav_need_to_sync) {
+        } */
+        else if (id == R.id.nav_need_to_sync) {
             fragmentTransaction.replace(R.id.nav_conteiner, syncListFragment);
         } else if (id == R.id.nav_manage) {
             fragmentTransaction.replace(R.id.nav_conteiner, manageFragment);
@@ -225,11 +226,9 @@ public class MainActivity extends AppCompatActivity
                     params.put("id", String.valueOf(device.getId()));
                     params.put("method", "method_fined");
                     params.put("status_invent", Const.STATUS_FINED);
-
                     return params;
                 }
             };
-
             MySQLConnect.getInstance(this).addToRequestque(stringRequest);
         }
 
