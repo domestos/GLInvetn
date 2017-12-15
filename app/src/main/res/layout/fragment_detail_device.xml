@@ -47,7 +47,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_weight="1"
-        android:theme="@style/Base.TextAppearance.AppCompat.Widget.DropDownItem" />
+   />
 
     <EditText
         android:id="@+id/edDescription"
