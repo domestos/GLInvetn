@@ -44,7 +44,7 @@ import java.util.Map;
 public class DeviceDetailFragment extends Fragment implements View.OnClickListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private String[] arrayLocation = {"", "QA Red", "Administration", "BB", "Meeting Room", "QA Black", "QA Green", "QA White", "SMU", "Server Room", "Test room", "Training Room", "WAA", "Warehouse"};
+    private String[] arrayLocation = {"", "QA Red", "Administration", "BB", "Meeting Room", "QA Amber", "QA Black", "QA Green", "QA White", "SMU", "Server Room", "Test room", "Training Room", "WAA", "Warehouse"};
     private TextView tvNumber;
     private ProgressBar progressBar;
     private TextView tvItem;
