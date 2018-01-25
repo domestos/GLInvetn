@@ -21,6 +21,8 @@ if (mysql_num_rows($result) > 0) {
         $product["name_wks"] = $row["name_wks"];
         $product["owner"] = $row["owner"];
         $product["location"] = $row["location"];
+        $product["status_invent"] = $row["status_invent"];
+      //  $product["status_sync"] = $row["status_sync"];
         $product["description"] = $row["description"];
 
       array_push($response["products"], $product);

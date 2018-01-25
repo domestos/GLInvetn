@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 
 import com.example.valerapelenskyi.glinvent.model.Device;
+import com.example.valerapelenskyi.glinvent.model.User;
 import com.example.valerapelenskyi.glinvent.model.constants.Const;
 
 import java.util.ArrayList;
@@ -52,12 +53,37 @@ public class SQLiteConnect {
         return sqLiteDatabase;
     }
 
+    // ================= insertAllUsersToSQList =====================================================
+    public void insertAllUsersToSQList(List<User> users) {
+        Log.d(Const.TAG_LOG, "run isertAllUsersToSQList");
+        String sql = "INSERT INTO "+ DBHelper.TABLE_USERS + " VALUES(?);";
+        SQLiteStatement sqLiteStatement = sqLiteDatabase.compileStatement(sql);
+        if(users !=null){
+            sqLiteDatabase.beginTransaction();
+            Log.d(Const.TAG_LOG, "beginTransaction ");
+            try {
+                for (int i =0; i< users.size();i++){
+                    sqLiteStatement.clearBindings();
+                    sqLiteStatement.bindString(1, users.get(i).getName());
+                    sqLiteStatement.execute();
+                }
+                sqLiteDatabase.setTransactionSuccessful();
+            }finally {
+                sqLiteDatabase.endTransaction();
+            }
+        }else {
+            Log.d(Const.TAG_LOG, "Can't insert. Users is Empty");
+            //  return false;
+        }//end IF
 
-    // ================= insertAllItemToSQList =====================================================
+
+    }
+
+        // ================= insertAllItemToSQList =====================================================
     public void insertAllItemToSQList(List<Device> devices) {
         Log.d(Const.TAG_LOG, "run insertAllItemToSQList");
         //
-        String sql = "INSERT INTO " + DBHelper.TABLE_NAME + " VALUES(?,?,?,?,?,?,?,?,?);";
+        String sql = "INSERT INTO " + DBHelper.TABLE_INVENTORY + " VALUES(?,?,?,?,?,?,?,?,?);";
         SQLiteStatement sqLiteStatement = sqLiteDatabase.compileStatement(sql);
         if (devices != null) {
             sqLiteDatabase.beginTransaction();
@@ -105,10 +131,25 @@ public class SQLiteConnect {
 
     }
 
+
+    // ================= getAllUsersFromSQLite =====================================================
+    public List<User> getAllUsersFromSQLite() {
+        List<User> users = new ArrayList<User>();
+        Cursor cursor = sqLiteDatabase.query(DBHelper.TABLE_USERS, null, null, null, null, null, null);
+        users = wrapperUsers(cursor);
+        cursor.close();
+        if (users != null) {
+            Log.d(Const.TAG_LOG, "result: Users into SQLite =" + users.size());
+        } else {
+            Log.d(Const.TAG_LOG, "result:   Users into SQLite is NULL");
+        }
+        return users;
+    }
+
     // ================= getAllItemsFromSQLite =====================================================
     public List<Device> getAllItemsFromSQLite() {
         List<Device> devices = new ArrayList<Device>();
-        Cursor cursor = sqLiteDatabase.query(DBHelper.TABLE_NAME, null, null, null, null, null, null);
+        Cursor cursor = sqLiteDatabase.query(DBHelper.TABLE_INVENTORY, null, null, null, null, null, null);
         devices = wrapperDevices(cursor);
         cursor.close();
         if (devices != null) {
@@ -126,7 +167,7 @@ public class SQLiteConnect {
         String[] selectArgs = new String[]{number};
         String select = DBHelper.KEY_NUMBER + " = ? ";
         //Device devices = new Device();
-        Cursor cursor = sqLiteDatabase.query(DBHelper.TABLE_NAME, null, select, selectArgs, null, null, null);
+        Cursor cursor = sqLiteDatabase.query(DBHelper.TABLE_INVENTORY, null, select, selectArgs, null, null, null);
         try {
             device = wrapperDevices(cursor).get(0);
         } catch (Exception e) {
@@ -144,7 +185,7 @@ public class SQLiteConnect {
         String[] selectArgs = new String[]{number};
         String select = DBHelper.KEY_NUMBER + " = ? ";
         //Device devices = new Device();
-        Cursor cursor = sqLiteDatabase.query(DBHelper.TABLE_NAME, null, select, selectArgs, null, null, null);
+        Cursor cursor = sqLiteDatabase.query(DBHelper.TABLE_INVENTORY, null, select, selectArgs, null, null, null);
         devices = wrapperDevices(cursor);
         cursor.close();
         return devices;
@@ -157,7 +198,7 @@ public class SQLiteConnect {
         Device device = null;
         String[] selectArgs = new String[]{String.valueOf(Const.STATUS_SYNC_OFFLINE)};
         String select = DBHelper.KEY_STATUS_SYNC + " = ? ";
-        Cursor cursor = sqLiteDatabase.query(DBHelper.TABLE_NAME, null, select, selectArgs, null, null, null);
+        Cursor cursor = sqLiteDatabase.query(DBHelper.TABLE_INVENTORY, null, select, selectArgs, null, null, null);
         devices = wrapperDevices(cursor);
         return devices;
     }
@@ -168,7 +209,7 @@ public class SQLiteConnect {
         ContentValues contentValues = new ContentValues();
         contentValues.put(DBHelper.KEY_STATUS_SYNC, statusSync);
         contentValues.put(DBHelper.KEY_STATUS_INVENT, Const.STATUS_FINED);
-        sqLiteDatabase.update(DBHelper.TABLE_NAME, contentValues, DBHelper.KEY_ID + " = ? ", whereArgs);
+        sqLiteDatabase.update(DBHelper.TABLE_INVENTORY, contentValues, DBHelper.KEY_ID + " = ? ", whereArgs);
 
     }
 
@@ -180,7 +221,7 @@ public class SQLiteConnect {
         contentValues.put(DBHelper.KEY_OWNER, device.getOwner());
         contentValues.put(DBHelper.KEY_LOCATION, device.getLocation());
         contentValues.put(DBHelper.KEY_DESCRIPTION, device.getDescription());
-        sqLiteDatabase.update(DBHelper.TABLE_NAME, contentValues, DBHelper.KEY_ID + " = ? ", whereArgs);
+        sqLiteDatabase.update(DBHelper.TABLE_INVENTORY, contentValues, DBHelper.KEY_ID + " = ? ", whereArgs);
     }
 
     private List<Device> wrapperDevices(Cursor cursor) {
@@ -207,9 +248,22 @@ public class SQLiteConnect {
         return devices;
     }
 
+    private List<User> wrapperUsers(Cursor cursor) {
+        List<User> users= new ArrayList<User>();
+        if (cursor.moveToFirst()) {
+            for (cursor.isFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+                users.add(
+                        new User(cursor.getString(cursor.getColumnIndex(DBHelper.KEY_USER_NAME)))
+                );
+            }
+        } else {
+            Log.d(Const.TAG_LOG, "Users into SQLite= " + String.valueOf(cursor.getCount()));
+        }
+        return users;
+    }
 
     public int deleteALL() {
-
-        return sqLiteDatabase.delete(DBHelper.TABLE_NAME, null, null);
+               sqLiteDatabase.delete(DBHelper.TABLE_USERS,null, null);
+        return sqLiteDatabase.delete(DBHelper.TABLE_INVENTORY, null, null);
     }
 }

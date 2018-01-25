@@ -147,17 +147,8 @@ public class InventorizationActivityFragment  extends Fragment{
             inventorizationActivity.showProgress(false);
         }
 
-
-
-
     }
-
-
-
-
-
 // =============================GS==============================================================
-
 
     public boolean getIsWork() {
         return isWork;

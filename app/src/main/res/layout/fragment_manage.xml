@@ -48,11 +48,34 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="MSQL: "
+            android:text="Devices into MYSQL: "
             android:textSize="18sp" />
 
         <TextView
-            android:id="@+id/tvRowInMYSQL"
+            android:id="@+id/tvDevicesRowInMYSQL"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text=""
+            android:textColor="@android:color/holo_green_dark"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Users into MYSQL: "
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/tvUsersRowInMYSQL"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -84,11 +107,34 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="SQLite: "
+                android:text="Devices into SQLite: "
                 android:textSize="18sp" />
 
             <TextView
-                android:id="@+id/tvRowInSQLite"
+                android:id="@+id/tvDevicesRowInSQLite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text=""
+                android:textColor="@android:color/holo_green_dark"
+                android:textSize="18sp" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textView9"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Users into SQLite: "
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/tvUsersRowInSQLite"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -145,5 +191,6 @@
             android:text=""
             android:textSize="18sp" />
     </LinearLayout>
+
 
 </LinearLayout>
