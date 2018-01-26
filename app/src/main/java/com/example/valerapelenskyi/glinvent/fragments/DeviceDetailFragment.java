@@ -103,7 +103,7 @@ public class DeviceDetailFragment extends Fragment implements View.OnClickListen
     private String[] getArrayFtomList(List<User> allUsers) {
         String[] users = new String[allUsers.size()];
         for (int i=0; allUsers.size() > i;i++){
-            users[i]  = allUsers.get(i).getName().toString();
+            users[i]  = allUsers.get(i).getName().toString().trim();
            // Log.d(Const.TAG_LOG, "getArrayFtomList: "+allUsers.get(i).getName().toString());
         }
         return users  ;
@@ -144,10 +144,19 @@ public class DeviceDetailFragment extends Fragment implements View.OnClickListen
                 Log.d(Const.TAG_LOG, "onItemClick: "+adapterView.getItemAtPosition(i));
                 view.setSelected(true);
                 edOwner.setText(""+adapterView.getItemAtPosition(i));
+                listSearchUser.setVisibility(View.GONE);
             }
         });
 
         listSearchUser.setAdapter(adapterUsers);
+
+        edOwner.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+
+               if(!b){ listSearchUser.setVisibility(View.GONE );}
+            }
+        });
 
         edOwner.addTextChangedListener(new TextWatcher() {
             @Override
@@ -157,12 +166,16 @@ public class DeviceDetailFragment extends Fragment implements View.OnClickListen
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                adapterUsers.getFilter().filter(charSequence);
+               adapterUsers.getFilter().filter(charSequence);
+
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
-
+                if(!edOwner.isActivated()){
+                    listSearchUser.setVisibility(View.GONE );
+                }
+                listSearchUser.setVisibility(View.VISIBLE);
             }
 
 
