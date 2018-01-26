@@ -30,8 +30,14 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:ems="10"
-        android:inputType="text"
-        android:text="Owner" />
+        android:text="Owner"
+        android:hint="Search" />
+
+    <ListView
+        android:id="@+id/listSearchUsers"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:scrollbars="horizontal"></ListView>
 
     <!--<EditText-->
         <!--android:id="@+id/edLocation"-->
@@ -47,6 +53,8 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_weight="1"
+        android:hint="location"
+
    />
 
     <EditText
@@ -56,7 +64,7 @@
         android:layout_weight="1"
         android:ems="10"
         android:inputType="textMultiLine"
-        tools:text="Descriptions" />
+        tools:hint="Descriptions" />
 
     <ProgressBar
         android:id="@+id/progressBar"

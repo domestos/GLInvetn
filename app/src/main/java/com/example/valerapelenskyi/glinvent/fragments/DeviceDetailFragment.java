@@ -1,10 +1,10 @@
 package com.example.valerapelenskyi.glinvent.fragments;
 
 
-import android.graphics.Color;
-import android.icu.util.ValueIterator;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -27,14 +28,18 @@ import com.example.valerapelenskyi.glinvent.R;
 import com.example.valerapelenskyi.glinvent.database.mysql.MySQLConnect;
 import com.example.valerapelenskyi.glinvent.database.sqlite.SQLiteConnect;
 import com.example.valerapelenskyi.glinvent.model.Device;
+import com.example.valerapelenskyi.glinvent.model.User;
 import com.example.valerapelenskyi.glinvent.model.constants.Const;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import static android.widget.Toast.LENGTH_LONG;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -52,7 +57,12 @@ public class DeviceDetailFragment extends Fragment implements View.OnClickListen
     private EditText edDescription;
     private Spinner spLocation;
     private Button btnSave;
+    private ListView listSearchUser;
+    private ArrayAdapter<String> adapterUsers;
     private static final String ARG_DEVICE = "device";
+    private static final String ARG_USERS = "users";
+    private String[] arrayUsers;
+    private List<User> allUsers;
 
     // TODO: Rename and change types of parameters
     private Device mDevice;
@@ -81,18 +91,31 @@ public class DeviceDetailFragment extends Fragment implements View.OnClickListen
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        allUsers  = (ArrayList<User>) SQLiteConnect.getInstance(getContext()).getAllUsersFromSQLite();
+        arrayUsers = getArrayFtomList(allUsers);
+        Log.d(Const.TAG_LOG, "onCreate: " +allUsers.size());
+        Log.d(Const.TAG_LOG, "onCreate: " +arrayUsers.length);
         if (getArguments() != null) {
             mDevice = getArguments().getParcelable(ARG_DEVICE);
         }
+    }
+
+    private String[] getArrayFtomList(List<User> allUsers) {
+        String[] users = new String[allUsers.size()];
+        for (int i=0; allUsers.size() > i;i++){
+            users[i]  = allUsers.get(i).getName().toString();
+           // Log.d(Const.TAG_LOG, "getArrayFtomList: "+allUsers.get(i).getName().toString());
+        }
+        return users  ;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_detail_device, container, false);
+        final View view = inflater.inflate(R.layout.fragment_detail_device, container, false);
         progressBar = view.findViewById(R.id.progressBar);
-
+        listSearchUser = view.findViewById(R.id.listSearchUsers);
         tvNumber = view.findViewById(R.id.tvNumber);
         tvItem = view.findViewById(R.id.tvItem);
         edOwner = view.findViewById(R.id.edOwner);
@@ -109,18 +132,57 @@ public class DeviceDetailFragment extends Fragment implements View.OnClickListen
         // edLocation.setText(mDevice.getLocation());
         edDescription.setText(mDevice.getDescription());
 
+        if(arrayUsers == null){
+            arrayUsers[0] = "none";
+        }
+        adapterUsers = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, arrayUsers);
 
-        ArrayAdapter<String> locations = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, arrayLocation);
-        locations.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
-        spLocation.setAdapter(locations);
 
+        listSearchUser.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Log.d(Const.TAG_LOG, "onItemClick: "+adapterView.getItemAtPosition(i));
+                view.setSelected(true);
+                edOwner.setText(""+adapterView.getItemAtPosition(i));
+            }
+        });
 
-        setSelectItem(spLocation, mDevice);
-        spLocation.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        listSearchUser.setAdapter(adapterUsers);
+
+        edOwner.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
 
             @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                adapterUsers.getFilter().filter(charSequence);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+
+
+
+
+
+
+        });
+
+
+        ArrayAdapter<String> adapterLocations = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, arrayLocation);
+        adapterLocations.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+        spLocation.setAdapter(adapterLocations);
+
+        setSelectItem(spLocation, mDevice);
+
+        spLocation.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-              //  Toast.makeText(getContext(), adapterView.getSelectedItem().toString(), Toast.LENGTH_LONG).show();
+             //  Toast.makeText(getContext(), adapterView.getSelectedItem().toString(), Toast.LENGTH_LONG).show();
                 mDevice.setLocation(adapterView.getSelectedItem().toString());
             }
 
@@ -128,6 +190,10 @@ public class DeviceDetailFragment extends Fragment implements View.OnClickListen
             public void onNothingSelected(AdapterView<?> adapterView) {
 
             }
+
+
+
+
         });
 
         showProgress(false);
@@ -148,7 +214,7 @@ public class DeviceDetailFragment extends Fragment implements View.OnClickListen
             if (localtion.equals(chek)) {
                 spLocation.setSelection(i);
             }
-            Log.d("TAG_location", localtion + " = " + arrayLocation[i]);
+       //     Log.d("TAG_location", localtion + " = " + arrayLocation[i]);
             i++;
         }
     }
@@ -178,7 +244,7 @@ public class DeviceDetailFragment extends Fragment implements View.OnClickListen
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
-                            Toast.makeText(getActivity(), response.toString(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(getActivity(), response.toString(), LENGTH_LONG).show();
                             int responseSuccess = getSuccess(response);
                             if (responseSuccess != 0) {
                                 // inset to SQLite SATATUS_ONLINE
@@ -190,7 +256,7 @@ public class DeviceDetailFragment extends Fragment implements View.OnClickListen
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            Toast.makeText(getActivity(), "MYSQL ERROR " + error.getMessage(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(getActivity(), "MYSQL ERROR " + error.getMessage(), LENGTH_LONG).show();
                             SQLiteConnect.getInstance(getContext()).updateItem(mDevice, Const.STATUS_SYNC_OFFLINE);
                             showProgress(false);
                         }

@@ -13,7 +13,7 @@ import com.example.valerapelenskyi.glinvent.model.constants.Const;
 
 public class DBHelper extends SQLiteOpenHelper {
 
-    public static final int DATABASE_VERSION =2;
+    public static final int DATABASE_VERSION =3;
     public static final String DATABASE_NAME="wp_gameloft";
     public static final String TABLE_INVENTORY="wp_inventory";
     public static final String TABLE_USERS="wp_employees";
@@ -36,8 +36,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        Log.d(Const.TAG_LOG, "Was create Table "+TABLE_INVENTORY);
 
+        Log.d(Const.TAG_LOG, "Was create Table "+TABLE_INVENTORY);
         sqLiteDatabase.execSQL(" create table "+TABLE_INVENTORY+
                 "("+
                     KEY_ID+" integer primary key, "+
@@ -51,6 +51,8 @@ public class DBHelper extends SQLiteOpenHelper {
                     KEY_DESCRIPTION +" text "+
                 ") "
         );
+
+        Log.d(Const.TAG_LOG, "Was create Table "+TABLE_USERS);
 
         sqLiteDatabase.execSQL(" create table "+TABLE_USERS+
                 "("+
@@ -66,11 +68,13 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
             sqLiteDatabase.execSQL("drop table if exists "+ TABLE_INVENTORY);
+            sqLiteDatabase.execSQL("drop table if exists "+ TABLE_USERS);
             onCreate(sqLiteDatabase);
     }
 
     public void dropTable(SQLiteDatabase sqLiteDatabase){
         sqLiteDatabase.execSQL("drop table if exists "+ TABLE_INVENTORY);
+        sqLiteDatabase.execSQL("drop table if exists "+ TABLE_USERS);
     }
 
 }
